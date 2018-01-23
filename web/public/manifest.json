@@ -1,0 +1,15 @@
+{
+  "short_name": "grow us",
+  "name": "grow us",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "32x32 16x16",
+      "type": "image/x-icon"
+    }
+  ],
+  "start_url": "./index.html",
+  "display": "standalone",
+  "theme_color": "rgb(231, 221, 235)",
+  "background_color": "#ffffff"
+}

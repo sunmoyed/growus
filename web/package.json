@@ -1,0 +1,41 @@
+{
+  "name": "grow-us",
+  "version": "0.0.1",
+  "description": "it's time to grow us",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sunmoyed/growus.git"
+  },
+  "keywords": [
+    "stronk"
+  ],
+  "contributors": [
+    {
+      "name": "daiyi!",
+      "email": "root@daiyi.co",
+      "url": "http://daiyi.co"
+    },
+    {
+      "name": "Alexandria Sun",
+      "email": "tbd",
+      "url": "tbd"
+    }
+  ],
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/sunmoyed/growus/issues"
+  },
+  "homepage": "https://github.com/sunmoyed/growus#readme",
+  "dependencies": {
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-scripts": "1.1.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}

@@ -6,9 +6,19 @@ Setup Instructions
 3. Create a new virtual environment (called "env") using `virtualenv -p [your path to python3] env`.
 4. Activate the virtual environment using `. env/bin/activate`
 5. Install Flask inside the virtual environment using `pip install Flask`
+6. To run the frontend, install npm. Suggestion: install npm using nvm.
 
 Development Instructions
 
 1. When you work on a project, activate the virtual environment using the command: `. env/bin/activate`
-2. To run the project, enter the project subfolder: `cd growus` (so that you are within the folder `growus/growus`) and run `python3 growus.py`.
-3. Go to `localhost:9001` in the browser to grow us.
+2. To run the dev server:
+  ```
+  make server-dev
+  ```
+  The API is now serving at http://localhost:9001
+
+3. To run the dev ui:
+  ```
+  make web-dev
+  ```
+  Go to http://localhost:3000 in your browser of choice to grow us. \o/
