@@ -15,8 +15,8 @@ class App extends Component {
         </header>
         <div className="workout container">
           here is your random workout for the day!
+          <RandomWorkout />
         </div>
-        <RandomWorkout />
       </div>
     );
   }

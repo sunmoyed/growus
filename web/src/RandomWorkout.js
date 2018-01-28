@@ -25,7 +25,7 @@ class RandomWorkout extends Workout {
     const {workout} = this.state;
 
     return (
-      <div className="workout container">
+      <div className="workout">
         <ul>
           {workout.map((exercise, index) => (<Exercise key={index}>{exercise}</Exercise>))}
         </ul>
