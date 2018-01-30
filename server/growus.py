@@ -19,10 +19,9 @@ app.config.from_envvar('GROWUS_SETTINGS', silent=True)
 from flask import Flask, render_template, Response
 from flask_cors import CORS
 import json
+import os
 
-import fake_data
-
-app = Flask(__name__, static_folder="../web", template_folder="../templates")
+app = Flask(__name__)
 app.config.from_object(__name__)
 
 app.config.update(dict(
@@ -39,9 +38,20 @@ def hello():
 @app.route("/workout/random", methods = ['GET'])
 def api_workout_random():
 	workout = {"workout": ["squeeze doughnut", "stir-fry with cast iron pan", "ride bicycle!", "eat chocolate"]}
-	js = json.dumps(workout)
-	response = Response(js, status=200, mimetype="application/json")
+	response_json = json.dumps(workout)
+	response = Response(response_json, status=200, mimetype="application/json")
 	return response
+
+@app.route("/exercises", methods = ['GET'])
+def api_exercises():
+	with open(os.path.join(app.root_path, "fake_data.json")) as asset:
+		fake_data = json.load(asset)
+		exercises = fake_data["exercises"]
+		exercises_json = json.dumps(exercises)
+
+		response = Response(exercises_json, status=200, mimetype="application/json")
+		
+		return response
 
 if __name__ == "__main__":
 	app.run(port=9001)
