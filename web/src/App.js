@@ -13,7 +13,7 @@ class App extends Component {
             <h2>let's grow us <img src={logo} className="App-logo" alt="logo" /></h2>
           </div>
         </header>
-        <div className="workout container">
+        <div className="container">
           here is your random workout for the day!
           <RandomWorkout />
         </div>
