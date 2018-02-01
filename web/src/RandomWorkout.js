@@ -9,7 +9,7 @@ class RandomWorkout extends Workout {
   }
 
   fetchRandomWorkout() {
-    fetch('/workout/random')
+    fetch('http://localhost:9001/workout/random')
       .then(results => results.json())
       .then(jsonResponse => {
         this.setState({workout: jsonResponse.workout})
