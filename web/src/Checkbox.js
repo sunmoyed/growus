@@ -11,7 +11,7 @@ class Checkbox extends Component {
 
     this.setState({isChecked: !this.state.isChecked});
 
-    handleCheckboxChange(label);
+    handleCheckboxChange(label, !this.state.isChecked);
   }
 
   render() {

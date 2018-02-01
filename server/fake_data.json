@@ -5,5 +5,25 @@
     "ride bicycle to ice cream shop",
     "eat chocolate",
     "hike to class through forest school"
+  ],
+  "workouts": [
+    {
+      "name": "stretches",
+      "exercises": [
+        "touch toes",
+        "pigeon",
+        "splits!"
+      ]
+    },
+    {
+      "name": "core",
+      "exercises": [
+        "planks",
+        "bicycles",
+        "penguin",
+        "v-sit",
+        "crunches"
+      ]
+    }
   ]
 }

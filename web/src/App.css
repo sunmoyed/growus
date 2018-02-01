@@ -1,3 +1,89 @@
+/*** CSS RESET ***/
+
+
+  /* Forms ====================================================== */
+
+  option {
+    display: block;
+  }
+
+  button,
+  input,
+  optgroup,
+  select,
+  textarea {
+    font-family: "courier new", monospace;
+    /*font-size: 100%;*/
+    /*line-height: 1.15;*/
+    padding: 3px 3px 1px 3px;
+    border: 1px solid #d2d2d2;
+    background: none;
+    color: #000;
+  }
+
+  button, /* Show the overflow in IE. */
+  input { /* Show the overflow in Edge. */
+    overflow: visible;
+  }
+
+  button,
+  select {
+    &:focus {
+      outline: @medium-gray dotted 1px;
+    }
+  }
+
+  /**
+   * 1. Prevent a WebKit bug where (2) destroys native `audio` and `video`
+   *    controls in Android 4.
+   * 2. Correct the inability to style clickable types in iOS and Safari.
+   */
+
+  button,
+  html [type="button"], /* 1 */
+  [type="reset"],
+  [type="submit"] {
+    -webkit-appearance: button; /* 2 */
+  }
+
+  // Restore the focus styles unset by the previous rule.
+  button:-moz-focusring,
+  [type="button"]:-moz-focusring,
+  [type="reset"]:-moz-focusring,
+  [type="submit"]:-moz-focusring {
+    outline: 1px dotted ButtonText;
+  }
+
+  textarea {
+    overflow: auto; /* Remove the default vertical scrollbar in IE. */
+  }
+
+  [type="checkbox"],
+  [type="radio"] {
+    box-sizing: border-box; /* IE 10- */
+  }
+
+  // Correct the cursor style of increment and decrement buttons in Chrome.
+  [type="number"]::-webkit-inner-spin-button,
+  [type="number"]::-webkit-outer-spin-button {
+    height: auto;
+  }
+
+  [type="search"] {
+    -webkit-appearance: textfield; /* Correct the odd appearance in Chrome and Safari. */
+    outline-offset: -2px; /* Correct the outline style in Safari. */
+  }
+
+  ::-webkit-file-upload-button {
+    -webkit-appearance: button; /* Correct the inability to style clickable types in iOS and Safari. */
+  }
+
+  button:hover {
+    cursor: pointer;
+  }
+
+/***** MAIN *****/
+
 .App {
   display: flex;
   height: 100vh;
@@ -40,6 +126,18 @@ header h2 {
   fill: currentColor;
 }
 
+.editor {
+  border: 3px solid #a7e4f0;
+}
+
+.editor input[type="text"] {
+  border: none;
+  border-bottom: 1px solid;
+  padding-left: 0;
+  padding-right: 0;
+  margin: 6px 2px 0;
+}
+
 
 /***** CHECKBOX *****/
 
@@ -47,27 +145,32 @@ header h2 {
   margin: 7px 0;
 }
 
-input{ display:none; }
+input[type="checkbox"] {
+  display: none;
+}
 
 .checkbox label {
   display: flex;
 }
 
 label div{
-	width:12px;
-	height:12px;
-	display:inline-block;
-	border:2px solid #a7e4f0;
-	text-align:center;
+	width: 12px;
+	height: 12px;
+	display: inline-block;
+	border: 2px solid #a7e4f0;
+	text-align: center;
   vertical-align: middle;
-	line-height:10px;
-	margin-right:6px;
-	border-radius:3px;
-	cursor:pointer;
+	line-height: 10px;
+	margin-right: 6px;
+	border-radius: 3px;
+	cursor: pointer;
   color: #494949;
 }
 
-label i{ font-size:16px;	opacity:0; }
-label:hover div{ background:#e4f2f4; }
-input:checked+div i{ opacity:1; }
-input:checked+label div{ background:#16a085; }
+label i {
+  font-size: 16px;
+  opacity: 0;
+}
+label:hover div { background:#e4f2f4; }
+input:checked+div i { opacity:1; }
+input:checked+label div { background:#16a085; }

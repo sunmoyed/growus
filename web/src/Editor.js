@@ -35,18 +35,19 @@ class Editor extends Component {
    )
  }
 
- toggleCheckbox(label) {
-
+ toggleCheckbox = (label, isChecked) => {
  }
 
   render() {
     const { items } = this.state
 
     return (
-      <div className="items">
+      <div className="container editor items">
+        <input type="text" placeholder="title"></input>
         <ul>
           {items.map((exercise, index) => this.createCheckbox(exercise, index))}
         </ul>
+        <button>save workout</button>
       </div>
     );
   }

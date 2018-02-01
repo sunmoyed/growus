@@ -4,21 +4,13 @@ import Exercise from './Exercise.js'
 
 class Workout extends Component {
 
-  constructor(props) {
-    super()
-
-    this.state = {
-      workout: []
-    }
-  }
-
   render() {
-    const { workout } = this.state
+    const { exercises } = this.props
 
     return (
       <div className="workout">
         <ul>
-          {workout.map((exercise, index) => (<Exercise key={index}>{exercise}</Exercise>))}
+          {exercises.map((exercise, index) => (<Exercise key={index}>{exercise}</Exercise>))}
         </ul>
       </div>
     );
