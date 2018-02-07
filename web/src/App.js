@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import Editor from './Editor'
 import RandomWorkout from './RandomWorkout'
+import Workouts from './Workouts'
 import logo from './logo.svg';
 import './App.css';
 
@@ -15,6 +16,7 @@ class App extends Component {
           </div>
         </header>
         <RandomWorkout />
+        <Workouts />
         <Editor />
       </div>
     );

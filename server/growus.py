@@ -50,7 +50,18 @@ def api_exercises():
 		exercises_json = json.dumps(exercises)
 
 		response = Response(exercises_json, status=200, mimetype="application/json")
-		
+
+		return response
+
+@app.route("/workouts", methods = ['GET'])
+def api_workouts():
+	with open(os.path.join(app.root_path, "fake_data.json")) as asset:
+		fake_data = json.load(asset)
+		workouts = fake_data["workouts"]
+		workouts_json = json.dumps(workouts)
+
+		response = Response(workouts_json, status=200, mimetype="application/json")
+
 		return response
 
 if __name__ == "__main__":

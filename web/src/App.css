@@ -132,10 +132,16 @@ header h2 {
 
 .editor input[type="text"] {
   border: none;
-  border-bottom: 1px solid;
+  border-bottom: 1px solid #d0d0d0;
   padding-left: 0;
   padding-right: 0;
   margin: 6px 2px 0;
+  font-weight: bold;
+  width: 100%;
+}
+
+.editor input[type="text"]:focus {
+  border-color: #5ec3d7;
 }
 
 
