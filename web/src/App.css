@@ -125,6 +125,11 @@ ul {
   padding: 0 10px;
 }
 
+.actions button {
+  margin: 5px;
+  border-width: 0 0 1px 0;
+}
+
 .items ul {
   padding: 0;
 }
