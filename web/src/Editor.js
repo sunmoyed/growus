@@ -36,6 +36,15 @@ class Editor extends Component {
  }
 
  toggleCheckbox = (label, isChecked) => {
+  //  let items = this.state.items.slice()
+  //  if (isChecked) {
+  //    items.splice(items.indexOf(label), 1)
+  //    items.unshift(label)
+  //  }
+  //  else {
+   //
+  //  }
+  //  this.setState({items})
  }
 
   render() {

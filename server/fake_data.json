@@ -8,7 +8,7 @@
   ],
   "workouts": [
     {
-      "name": "stretches",
+      "title": "stretches",
       "exercises": [
         "touch toes",
         "pigeon",
@@ -16,7 +16,7 @@
       ]
     },
     {
-      "name": "core",
+      "title": "core",
       "exercises": [
         "planks",
         "bicycles",
