@@ -17,14 +17,14 @@
   make server-dev
   ```
 
-   The API is now serving at http://localhost:9001
+    The API is now serving at http://localhost:9001
 
 3. To run the dev ui:
   ```
   make web-dev
   ```
 
-   Go to http://localhost:3000 in your browser of choice to grow us. \o/
+    Go to http://localhost:3000 in your browser of choice to grow us. \o/
 
 # Devlopment Resources
 
@@ -32,3 +32,4 @@ Some useful links:
 * [tutorial on basic RESTful API's with python/flask.](https://blog.miguelgrinberg.com/post/designing-a-restful-api-with-python-and-flask)
 * [tutorial with database linking information.](http://flask.pocoo.org/docs/1.0/tutorial/ "delicious database deets")
 * [a nice markdown cheatsheet.](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet)
+* [design doc on goog.](https://docs.google.com/document/d/1EJFLodL6f9SXBc96IhTbjdg0OXjra0GBdBfM1jHvxP4/edit)
