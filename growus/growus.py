@@ -18,7 +18,7 @@ app.config.from_envvar('GROWUS_SETTINGS', silent=True)
 
 from flask import Flask, render_template, Response
 from flask_cors import CORS
-import json
+import json, random
 
 app = Flask(__name__, static_folder="../web", template_folder="../templates")
 app.config.from_object(__name__)
@@ -36,7 +36,12 @@ def hello():
 
 @app.route("/workout/random", methods = ['GET'])
 def api_workout_random():
-	workout = {"workout": ["squeeze doughnut", "stir-fry with cast iron pan", "ride bicycle!", "eat chocolate"]}
+	exercises = ["squeeze doughnut", "stir-fry with cast iron pan", "ride bicycle!", "eat chocolate"]
+
+	# randomize 1) number of exercises returned 2) which exercises are returned
+	numExercises = random.randint(1, len(exercises)) 
+	workout = { "workout" : random.sample(exercises, numExercises) }
+
 	js = json.dumps(workout)
 	response = Response(js, status=200, mimetype="application/json")
 	return response

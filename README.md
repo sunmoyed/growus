@@ -16,13 +16,15 @@
   ```
   make server-dev
   ```
-  ...The API is now serving at http://localhost:9001
+
+   The API is now serving at http://localhost:9001
 
 3. To run the dev ui:
   ```
   make web-dev
   ```
-  ...Go to http://localhost:3000 in your browser of choice to grow us. \o/
+
+   Go to http://localhost:3000 in your browser of choice to grow us. \o/
 
 # Devlopment Resources
 
