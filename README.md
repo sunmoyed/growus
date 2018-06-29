@@ -4,7 +4,7 @@
 1. [Install virtualenv.](http://flask.pocoo.org/docs/0.12/installation/)
 2. Obtain the path to your python3 version using `which python3`
 3. Create a new virtual environment (called "env") using `virtualenv -p [your path to python3] env`.
-4. Activate the virtual environment using `. env/bin/activate`
+4. Activate the virtual environment using `source env/bin/activate`
 5. Install Flask inside the virtual environment using `pip install Flask`
 6. Install Flask CORS using `pip install -U flask-cors`
 7. To run the frontend, [install npm](https://www.npmjs.com/get-npm). Suggestion: install npm using nvm.
@@ -17,12 +17,22 @@
   make server-dev
   ```
 
-  The API is now serving at http://localhost:9001
+ The API is now serving at http://localhost:9001
 
 3. To run the dev ui:
-  ```
-  make web-dev
-  ```
+
+  - go into the `web` folder and install the web packages: 
+  
+    ```
+    cd web
+    npm install
+    ```
+  
+  - now run the development server! (from the root of the project, where the makefile is)
+  
+    ```
+    make web-dev
+    ```
 
   Go to http://localhost:3000 in your browser of choice to grow us. \o/
 
