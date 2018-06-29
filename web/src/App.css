@@ -1,15 +1,30 @@
 .App {
   display: flex;
   height: 100vh;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .container {
-  background: rgb(231, 221, 235);
-  margin: auto;
+  margin: 10px;
   width: 200px;
   padding: 10px;
-  text-align: center;
   flex: 0 0 auto;
+}
+
+header .container {
+  background: none;
+  text-align: center;
+  border-bottom: 3px solid #a7e4f0;
+}
+
+header h2 {
+  margin-bottom: 0;
+}
+
+.workout ul {
+  padding: 10px;
 }
 
 .App-logo {
