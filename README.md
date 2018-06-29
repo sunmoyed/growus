@@ -18,7 +18,18 @@ Development Instructions
   The API is now serving at http://localhost:9001
 
 3. To run the dev ui:
-  ```
-  make web-dev
-  ```
+
+  - go into the `web` folder and install the web packages: 
+  
+    ```
+    cd web
+    npm install
+    ```
+  
+  - now run the development server! (from the root of the project, where the makefile is)
+  
+    ```
+    make web-dev
+    ```
+  
   Go to http://localhost:3000 in your browser of choice to grow us. \o/
