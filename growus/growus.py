@@ -16,9 +16,13 @@ app.config.update(dict(
 app.config.from_envvar('GROWUS_SETTINGS', silent=True)
 """
 
+import json
+import random
+
 from flask import Flask, render_template, Response
 from flask_cors import CORS
-import json, random
+
+import models
 
 app = Flask(__name__, static_folder="../web", template_folder="../templates")
 app.config.from_object(__name__)
