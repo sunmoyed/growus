@@ -8,6 +8,7 @@
 5. Install Flask inside the virtual environment using `pip install Flask`
 6. Install Flask CORS using `pip install -U flask-cors`
 7. To run the frontend, [install npm](https://www.npmjs.com/get-npm). Suggestion: install npm using nvm.
+8. [Install sqlite.](https://www.tutorialspoint.com/sqlite/sqlite_installation.htm)
 
 # Development Instructions
 
