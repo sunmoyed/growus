@@ -19,7 +19,7 @@ app.config.from_envvar('GROWUS_SETTINGS', silent=True)
 import json
 import random
 
-from flask import Flask, render_template, Response
+from flask import Flask, render_template, Response, request
 from flask_cors import CORS
 
 import models
@@ -47,6 +47,23 @@ def api_workout_random():
 	workout = { "workout" : random.sample(exercises, numExercises) }
 
 	js = json.dumps(workout)
+	response = Response(js, status=200, mimetype="application/json")
+	return response
+
+@app.route("/exercises/create", methods = ['POST'])
+def api_exercises_create():
+	exercise_type = request.form['type']
+	user_id = request.form['userId']
+	name = request.form['name']
+	description = request.form['description']
+
+	models.insert_exercise(exercise_type, user_id, name, description)
+	exercise = {"exercise_type" : exercise_type, 
+				"user_id" : user_id,
+				"name" : name,
+				"description" : description}
+
+	js = json.dumps(exercise)
 	response = Response(js, status=200, mimetype="application/json")
 	return response
 
