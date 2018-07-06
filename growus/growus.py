@@ -38,6 +38,7 @@ CORS(app)
 def hello():
 	return "Let's grow us!"
 
+# returns a random list of a user's exercises
 @app.route("/workout/random", methods = ['GET'])
 def api_workout_random():
 	exercises = ["squeeze doughnut", "stir-fry with cast iron pan", "ride bicycle!", "eat chocolate"]
@@ -50,6 +51,7 @@ def api_workout_random():
 	response = Response(js, status=200, mimetype="application/json")
 	return response
 
+# inserts a single exercise for a user
 @app.route("/exercises/create", methods = ['POST'])
 def api_exercises_create():
 	exercise_type = request.form['type']
@@ -64,6 +66,26 @@ def api_exercises_create():
 				"description" : description}
 
 	js = json.dumps(exercise)
+	response = Response(js, status=200, mimetype="application/json")
+	return response
+
+# remove all exercises associated with a user
+@app.route("/exercises/clear", methods = ['POST'])
+def api_exercises_clear():
+	user_id = request.form['userId']
+
+	models.delete_all_exercises(user_id)
+	return 'deleted exercises from user ' + str(user_id)
+
+# show all exercises associated with a user (uses fetchall method. consider cursor method)
+@app.route("/exercises/all", methods = ["GET"])
+def api_exercises_all():
+	user_id = request.form['userId']
+
+	linkdata = models.show_all_exercises(user_id)
+	all_exercises = { "all_exercises" : linkdata }
+	
+	js = json.dumps(all_exercises)
 	response = Response(js, status=200, mimetype="application/json")
 	return response
 
