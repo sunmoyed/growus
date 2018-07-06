@@ -78,14 +78,13 @@ def api_exercises_clear():
 	return 'deleted exercises from user ' + str(user_id)
 
 # show all exercises associated with a user (uses fetchall method. consider cursor method)
-@app.route("/exercises/all", methods = ["GET"])
-def api_exercises_all():
-	user_id = request.form['userId']
-
+# http://flask.pocoo.org/docs/0.12/api/#url-route-registrations
+@app.route("/exercises/<user_id>", methods = ["GET"])
+def api_exercises_all(user_id):
 	linkdata = models.show_all_exercises(user_id)
-	all_exercises = { "all_exercises" : linkdata }
-	
-	js = json.dumps(all_exercises)
+	exercises = { "exercises" : linkdata }
+
+	js = json.dumps(exercises)
 	response = Response(js, status=200, mimetype="application/json")
 	return response
 
