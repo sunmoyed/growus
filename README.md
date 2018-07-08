@@ -9,6 +9,18 @@
 6. Install Flask CORS using `pip install -U flask-cors`
 7. To run the frontend, [install npm](https://www.npmjs.com/get-npm). Suggestion: install npm using nvm.
 
+**sqlite3**
+
+To run the interactive shell: `sqlite3`. It should be already installed in most computers.
+
+Tip: sqlite doesn't prettyprint by default. To do so, create a file `.sqliterc` in your home directory (`cd ~`), and add this to the file: 
+
+```
+.headers ON
+.mode    COLUMN
+```
+
+
 # Development Instructions
 
 1. When you work on a project, activate the virtual environment using the command: `. env/bin/activate`
@@ -38,7 +50,7 @@
 
 4. When you're done, you can deactivate the virtual environment using the command: `deactivate` 
 
-# Devlopment Resources
+# Development Resources
 
 Some useful links:
 * [tutorial on writing basic RESTful API's with python/flask.](https://blog.miguelgrinberg.com/post/designing-a-restful-api-with-python-and-flask)
