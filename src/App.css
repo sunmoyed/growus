@@ -24,6 +24,10 @@ header h2 {
   font-size: 1.2em;
 }
 
+h3 {
+  font-size: 1.1em;
+}
+
 .workout ul {
   padding: 10px;
 }
@@ -35,4 +39,12 @@ header h2 {
   stroke-width: 0;
   stroke: currentColor;
   fill: currentColor;
+}
+
+/* Firebase */
+#firebaseui_container {
+  margin: 0 -24px;
+}
+.firebaseui-card-content {
+  padding: 0;
 }

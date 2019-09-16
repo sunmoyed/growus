@@ -1,6 +1,6 @@
 ## Grow Us
 
-The frontend app is built with React + Typescript (a special form of Javascript). The backend is Firebase. 
+The frontend app is built with React + Typescript (a special form of Javascript). The backend is Firebase.
 
 ### Get started with local development
 
@@ -21,6 +21,7 @@ To run the web app locally, every time:
 
 5. run the local server: `npm start`
 6. npm will aggressively open up a new browser tab at `http://localhost:3000`, where you can see your web app.
+7. ~~to run the backend locally: `firebase serve`~~ actually I have no idea how this works
 
 ### How to deploy
 
@@ -35,17 +36,6 @@ how to deploy firebase
 1. `npm run build`
 2. `firebase deploy`
 
-
-## Details on how I set up this project
-
-### how I set up firebase
-
-- [instructions](https://create-react-app.dev/docs/deployment#firebase-https-firebasegooglecom)
-- sign up for firebase https://console.firebase.google.com
-- install firebase tools `npm install -g firebase-tools`
-- log in to firebase `firebase login`
-- `firebase init`
-
 ## npm Scripts
 
 - This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
@@ -55,23 +45,23 @@ npm scripts that come with create-react-app:
 
 1. `npm start`
 
-    Runs the app in the development mode.<br>
-    Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+   Runs the app in the development mode.<br>
+   Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-    The page will reload if you make edits.<br>
-    You will also see any lint errors in the console.
+   The page will reload if you make edits.<br>
+   You will also see any lint errors in the console.
 
 2. `npm test`
 
-    Launches the test runner in the interactive watch mode.<br>
-    See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+   Launches the test runner in the interactive watch mode.<br>
+   See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
 3. `npm run build`
 
-    Builds the app for production to the `build` folder.<br>
-    It correctly bundles React in production mode and optimizes the build for the best performance.
+   Builds the app for production to the `build` folder.<br>
+   It correctly bundles React in production mode and optimizes the build for the best performance.
 
-    The build is minified and the filenames include the hashes.<br>
-    Your app is ready to be deployed!
+   The build is minified and the filenames include the hashes.<br>
+   Your app is ready to be deployed!
 
-    See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+   See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
