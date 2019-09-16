@@ -1,3 +1,18 @@
+## The backend is made of firebase
+
+### how I set up firebase
+
+- [instructions](https://create-react-app.dev/docs/deployment#firebase-https-firebasegooglecom)
+- sign up for firebase https://console.firebase.google.com
+- install firebase tools `npm install -g firebase-tools`
+- log in to firebase `firebase login`
+- `firebase init`
+
+### how to deploy firebase
+
+- `npm run build`
+- `firebase deploy`
+
 ## Available Scripts
 
 - This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
