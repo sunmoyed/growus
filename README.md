@@ -1,51 +1,71 @@
-# Setup Instructions
+## Grow Us
 
-0. Clone the project locally: `git clone https://github.com/sunmoyed/growus.git` and enter the folder: `cd growus`
-1. [Install virtualenv.](http://flask.pocoo.org/docs/0.12/installation/)
-2. Obtain the path to your python3 version using `which python3`
-3. Create a new virtual environment (called "env") using `virtualenv -p [your path to python3] env`.
-4. Activate the virtual environment using `source env/bin/activate`
-5. Install Flask inside the virtual environment using `pip install Flask`
-6. Install Flask CORS using `pip install -U flask-cors`
-7. To run the frontend, [install npm](https://www.npmjs.com/get-npm). Suggestion: install npm using nvm.
+The frontend app is built with React + Typescript (a special form of Javascript). The backend is Firebase. 
 
-# Development Instructions
+### Get started with local development
 
-1. When you work on a project, activate the virtual environment using the command: `. env/bin/activate`
-2. To run the dev server:
-  ```
-  make server-dev
-  ```
+Set up the frontend dependencies, one-time:
 
- The API is now serving at http://localhost:9001
+1. clone this repo locally `git clone https://github.com/sunmoyed/growus.git`
+2. enter the project folder `cd growus`
+3. install the frontend dependencies: `npm install`. (you might have to install npm first.)
+4. wait for a million years
 
-3. To run the dev ui:
+To run the web app locally, every time:
 
-  - go into the `web` folder and install the web packages: 
-  
-    ```
-    cd web
-    npm install
-    ```
-  
-  - now run the development server! (from the root of the project, where the makefile is)
-  
-    ```
-    make web-dev
-    ```
+5. run the local server: `npm start`
+6. npm will aggressively open up a new browser tab at `http://localhost:3000`, where you can see your web app.
 
-  Go to http://localhost:3000 in your browser of choice to grow us. \o/
+### How to deploy
 
-4. When you're done, you can deactivate the virtual environment using the command: `deactivate` 
+Setup for deploy:
 
-# Devlopment Resources
+- sign up for firebase https://console.firebase.google.com
+- install firebase tools `npm install -g firebase-tools`
+- log in to firebase `firebase login`
 
-Some useful links:
-* [tutorial on writing basic RESTful API's with python/flask.](https://blog.miguelgrinberg.com/post/designing-a-restful-api-with-python-and-flask)
-* [tutorial with database linking information.](http://flask.pocoo.org/docs/1.0/tutorial/ "delicious database deets")
-* [another tutorial involving database connection.](https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#connecting-our-api-to-a-database)
-* [python3 SQLite documentation.](https://docs.python.org/3/library/sqlite3.html#sqlite3.Connection.commit)
-* [a nice markdown cheatsheet.](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet)
-* [design doc on goog.](https://docs.google.com/document/d/1EJFLodL6f9SXBc96IhTbjdg0OXjra0GBdBfM1jHvxP4/edit)
-* [strava api documentation and authentication information.](https://developers.strava.com/docs/reference/)
-* [tutorial on connecting to API's with a python/flask app.](https://help.parsehub.com/hc/en-us/articles/217751808-API-Tutorial-How-to-get-run-data-using-Python-Flask)
+how to deploy firebase
+
+1. `npm run build`
+2. `firebase deploy`
+
+
+## Details on how I set up this project
+
+### how I set up firebase
+
+- [instructions](https://create-react-app.dev/docs/deployment#firebase-https-firebasegooglecom)
+- sign up for firebase https://console.firebase.google.com
+- install firebase tools `npm install -g firebase-tools`
+- log in to firebase `firebase login`
+- `firebase init`
+
+## npm Scripts
+
+- This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+- I ran `npx create-react-app grow-us --typescript`
+
+npm scripts that come with create-react-app:
+
+1. `npm start`
+
+    Runs the app in the development mode.<br>
+    Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+
+    The page will reload if you make edits.<br>
+    You will also see any lint errors in the console.
+
+2. `npm test`
+
+    Launches the test runner in the interactive watch mode.<br>
+    See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+
+3. `npm run build`
+
+    Builds the app for production to the `build` folder.<br>
+    It correctly bundles React in production mode and optimizes the build for the best performance.
+
+    The build is minified and the filenames include the hashes.<br>
+    Your app is ready to be deployed!
+
+    See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
