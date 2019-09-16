@@ -1,51 +1,68 @@
-# Setup Instructions
+## Available Scripts
 
-0. Clone the project locally: `git clone https://github.com/sunmoyed/growus.git` and enter the folder: `cd growus`
-1. [Install virtualenv.](http://flask.pocoo.org/docs/0.12/installation/)
-2. Obtain the path to your python3 version using `which python3`
-3. Create a new virtual environment (called "env") using `virtualenv -p [your path to python3] env`.
-4. Activate the virtual environment using `source env/bin/activate`
-5. Install Flask inside the virtual environment using `pip install Flask`
-6. Install Flask CORS using `pip install -U flask-cors`
-7. To run the frontend, [install npm](https://www.npmjs.com/get-npm). Suggestion: install npm using nvm.
+- This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+- `npx create-react-app grow-us --typescript`
+In the project directory, you can run:
 
-# Development Instructions
+### `npm start`
 
-1. When you work on a project, activate the virtual environment using the command: `. env/bin/activate`
-2. To run the dev server:
-  ```
-  make server-dev
-  ```
+Runs the app in the development mode.<br>
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
- The API is now serving at http://localhost:9001
+The page will reload if you make edits.<br>
+You will also see any lint errors in the console.
 
-3. To run the dev ui:
+### `npm test`
 
-  - go into the `web` folder and install the web packages: 
-  
-    ```
-    cd web
-    npm install
-    ```
-  
-  - now run the development server! (from the root of the project, where the makefile is)
-  
-    ```
-    make web-dev
-    ```
+Launches the test runner in the interactive watch mode.<br>
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-  Go to http://localhost:3000 in your browser of choice to grow us. \o/
+### `npm run build`
 
-4. When you're done, you can deactivate the virtual environment using the command: `deactivate` 
+Builds the app for production to the `build` folder.<br>
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
-# Devlopment Resources
+The build is minified and the filenames include the hashes.<br>
+Your app is ready to be deployed!
 
-Some useful links:
-* [tutorial on writing basic RESTful API's with python/flask.](https://blog.miguelgrinberg.com/post/designing-a-restful-api-with-python-and-flask)
-* [tutorial with database linking information.](http://flask.pocoo.org/docs/1.0/tutorial/ "delicious database deets")
-* [another tutorial involving database connection.](https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#connecting-our-api-to-a-database)
-* [python3 SQLite documentation.](https://docs.python.org/3/library/sqlite3.html#sqlite3.Connection.commit)
-* [a nice markdown cheatsheet.](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet)
-* [design doc on goog.](https://docs.google.com/document/d/1EJFLodL6f9SXBc96IhTbjdg0OXjra0GBdBfM1jHvxP4/edit)
-* [strava api documentation and authentication information.](https://developers.strava.com/docs/reference/)
-* [tutorial on connecting to API's with a python/flask app.](https://help.parsehub.com/hc/en-us/articles/217751808-API-Tutorial-How-to-get-run-data-using-Python-Flask)
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+
+### `npm run eject`
+
+**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+
+If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+
+Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+
+You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+
+## Learn More
+
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+
+To learn React, check out the [React documentation](https://reactjs.org/).
+
+### Code Splitting
+
+This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+
+### Analyzing the Bundle Size
+
+This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+
+### Making a Progressive Web App
+
+This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+
+### Advanced Configuration
+
+This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+
+### Deployment
+
+This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+
+### `npm run build` fails to minify
+
+This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
