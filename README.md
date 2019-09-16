@@ -4,6 +4,12 @@ The frontend app is built with React + Typescript (a special form of Javascript)
 
 ### Get started with local development
 
+Developer tools
+
+1. We use [VS Code](https://code.visualstudio.com/Download). Because it has the best inline typescript error message support, and the remote pairing plugin is supposedly decent.
+
+- be sure to install `Babel JavaScript`,
+
 Set up the frontend dependencies, one-time:
 
 1. clone this repo locally `git clone https://github.com/sunmoyed/growus.git`
