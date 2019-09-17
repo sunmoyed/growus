@@ -6,7 +6,7 @@ import Login from "./Login";
 
 import { User as FirebaseUser } from "firebase/app";
 
-import { firebaseApp, firebaseAuth } from "./Auth";
+import { firebaseApp, auth } from "./Auth";
 
 function processUser(user) {
   if (!user) {
@@ -53,7 +53,7 @@ class App extends React.Component {
 
   handleSignOut = e => {
     e.preventDefault();
-    firebaseAuth().signOut();
+    auth.signOut();
   };
 
   render() {

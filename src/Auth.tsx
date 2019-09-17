@@ -12,12 +12,12 @@ const firebaseConfig = {
 };
 
 export const firebaseApp = firebase.initializeApp(firebaseConfig);
-export const firebaseAuth = firebase.auth;
+export const auth = firebase.auth();
 
 export const uiConfigBase = {
   callbacks: {
     signInSuccessWithAuthResult: () => false
   },
-  signInFlow: "popup",
-  signInOptions: [firebaseAuth.GithubAuthProvider.PROVIDER_ID]
+  // signInFlow: "popup",
+  signInOptions: [firebase.auth.GithubAuthProvider.PROVIDER_ID]
 };

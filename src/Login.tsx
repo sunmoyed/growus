@@ -1,6 +1,6 @@
 import React from "react";
 import { FirebaseAuth } from "react-firebaseui";
-import { firebaseApp, uiConfigBase } from "./Auth";
+import { auth, uiConfigBase } from "./Auth";
 
 const uiConfig = uiConfigBase;
 uiConfig.callbacks.signInSuccessWithAuthResult = () => {
@@ -13,7 +13,7 @@ class Login extends React.PureComponent {
     return (
       <div>
         <h3>Log in</h3>
-        <FirebaseAuth uiConfig={uiConfig} firebaseAuth={firebaseApp.auth()} />
+        <FirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />
       </div>
     );
   }
