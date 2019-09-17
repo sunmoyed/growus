@@ -5,9 +5,20 @@ const Home = ({ user }) => {
   console.log(user);
   return (
     <div>
-      <h3>Home</h3>
-      <p>hello {user.displayName || "friend"}, you got this.</p>
-      <button onClick={() => firebaseAuth().signOut()}>Sign out</button>
+      <p>
+        {user.displayName || "friend"} (
+        <button
+          className="link-button"
+          onClick={e => {
+            e.preventDefault();
+            firebaseAuth().signOut();
+          }}
+        >
+          logout
+        </button>
+        )
+      </p>
+      <p>you got this. \o/</p>
     </div>
   );
 };
