@@ -2,26 +2,39 @@
   display: flex;
   height: 100vh;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+}
+
+header,
+footer,
+.page {
+  flex: 0 0 auto;
+  display: flex;
+  background: rgb(237, 245, 245);
+}
+
+.page {
+  flex: 1 0 auto;
 }
 
 .container {
   margin: 10px;
-  width: 200px;
+  margin-top: 0;
+  width: 300px;
   padding: 10px;
   flex: 0 0 auto;
 }
 
 header .container {
-  background: none;
-  text-align: center;
   border-bottom: 3px solid #a7e4f0;
 }
 
 header h2 {
-  margin-bottom: 0;
   font-size: 1.2em;
+}
+
+h3 {
+  font-size: 1.1em;
 }
 
 .workout ul {
@@ -35,4 +48,64 @@ header h2 {
   stroke-width: 0;
   stroke: currentColor;
   fill: currentColor;
+}
+
+.user-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+
+p {
+  margin: 0;
+  margin-bottom: 1em;
+}
+
+/*---RESET---*/
+.link-button {
+  border: none;
+  margin: 0;
+  padding: 0;
+  width: auto;
+  overflow: visible;
+
+  background: transparent;
+
+  /* inherit font & color from ancestor */
+  color: inherit;
+  font: inherit;
+
+  /* Normalize `line-height`. Cannot be changed from `normal` in Firefox 4+. */
+  line-height: normal;
+
+  /* Corrects font smoothing for webkit */
+  -webkit-font-smoothing: inherit;
+  -moz-osx-font-smoothing: inherit;
+
+  /* Corrects inability to style clickable `input` types in iOS */
+  -webkit-appearance: none;
+}
+.link-button::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+.link-button {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+  cursor: pointer;
+  color: #555;
+  text-decoration: underline #aaa5a5;
+}
+.link-button:hover {
+  color: #000;
+}
+
+/* Firebase */
+#firebaseui_container {
+  margin: 0 -24px;
+}
+.firebaseui-card-content {
+  padding: 0;
 }

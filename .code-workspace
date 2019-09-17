@@ -1,0 +1,35 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "workbench.colorCustomizations": {
+      "activityBar.background": "#ffffff",
+      "activityBar.foreground": "#15202b",
+      "activityBar.inactiveForeground": "#15202b99",
+      "activityBarBadge.background": "#dcc1fa",
+      "activityBarBadge.foreground": "#15202b",
+      "titleBar.activeBackground": "#e5f1f1",
+      "titleBar.inactiveBackground": "#e5f1f199",
+      "titleBar.activeForeground": "#15202b",
+      "titleBar.inactiveForeground": "#15202b99",
+      "statusBar.background": "#e6ebeb",
+      "statusBarItem.hoverBackground": "#dcc1fa",
+      "statusBar.foreground": "#15202b"
+    },
+    "peacock.color": "#e5f1f1"
+  },
+  "extensions": {
+    "recommendations": [
+      "mgmcdermott.vscode-language-babel",
+      "dbaeumer.vscode-eslint",
+      "vincaslt.highlight-matching-tag",
+      "yzhang.markdown-all-in-one",
+      "ziyasal.vscode-open-in-github",
+      "esbenp.prettier-vscode",
+      "eamodio.gitlens"
+    ]
+  }
+}
