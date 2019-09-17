@@ -26,13 +26,10 @@ footer,
 }
 
 header .container {
-  background: none;
-  text-align: center;
   border-bottom: 3px solid #a7e4f0;
 }
 
 header h2 {
-  margin-bottom: 0;
   font-size: 1.2em;
 }
 

@@ -1,51 +1,10 @@
 import React from "react";
-import { firebaseAuth } from "./Auth";
-import { User } from "firebase/app";
+import Profile, { ProfileProps } from "./Profile";
 
-type Props = {
-  user: User;
-};
+type Props = ProfileProps;
 
-type State = {
-  input: string;
-};
-
-export default class Home extends React.PureComponent<Props, State> {
-  state = {
-    input: ""
-  };
-
-  handleInputChange = input => {
-    this.setState({ input });
-  };
-
+export default class Home extends React.PureComponent<Props> {
   render() {
-    const { input } = this.state;
-    const { user } = this.props;
-
-    console.log(user);
-    return (
-      <div>
-        <p>
-          <img
-            className="user-icon"
-            src={user.photoURL || undefined}
-            alt="user icon"
-          />{" "}
-          {user.displayName || "friend"} (
-          <button
-            className="link-button"
-            onClick={e => {
-              e.preventDefault();
-              firebaseAuth().signOut();
-            }}
-          >
-            logout
-          </button>
-          )
-        </p>
-        <p>you got this. \o/</p>
-      </div>
-    );
+    return <Profile {...this.props} />;
   }
 }
