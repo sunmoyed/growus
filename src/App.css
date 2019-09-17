@@ -20,7 +20,7 @@ footer,
 .container {
   margin: 10px;
   margin-top: 0;
-  width: 200px;
+  width: 300px;
   padding: 10px;
   flex: 0 0 auto;
 }
@@ -51,6 +51,13 @@ h3 {
   stroke-width: 0;
   stroke: currentColor;
   fill: currentColor;
+}
+
+.user-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  vertical-align: middle;
 }
 
 p {
