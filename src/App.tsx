@@ -15,10 +15,14 @@ const EMPTY_USER = {
   imgSrc: ""
 };
 
+const Loading = () => {
+  return <div>loading...</div>;
+};
+
 const Page = ({ user, ...props }) => {
   // auth state is loading, don't show anything
   if (user === undefined) {
-    return <div />;
+    return <Loading />;
   } else if (!user) {
     return <Login {...props} />;
   }
@@ -59,6 +63,7 @@ class App extends React.Component {
 
   handleSignOut = e => {
     e.preventDefault();
+    this.setState({ specialMessage: "bye" });
     auth.signOut();
   };
 

@@ -37,6 +37,10 @@ header h2 {
   font-size: 1.2em;
 }
 
+.encouragement {
+  color: #aaa5a5;
+}
+
 label {
   margin-bottom: 10px;
   display: block;
