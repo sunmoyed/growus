@@ -25,12 +25,24 @@ footer,
   flex: 0 0 auto;
 }
 
+.section {
+  margin-bottom: 16px;
+}
+
 header .container {
   border-bottom: 3px solid #a7e4f0;
 }
 
 header h2 {
   font-size: 1.2em;
+}
+
+label {
+  margin-bottom: 10px;
+  display: block;
+}
+label input {
+  width: 100%;
 }
 
 h3 {
@@ -63,7 +75,7 @@ p {
 }
 
 /*---RESET---*/
-.link-button {
+.text-button {
   border: none;
   margin: 0;
   padding: 0;
@@ -86,19 +98,19 @@ p {
   /* Corrects inability to style clickable `input` types in iOS */
   -webkit-appearance: none;
 }
-.link-button::-moz-focus-inner {
+.text-button::-moz-focus-inner {
   border: 0;
   padding: 0;
 }
 
-.link-button {
+.text-button {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
   cursor: pointer;
   color: #555;
   text-decoration: underline #aaa5a5;
 }
-.link-button:hover {
+.text-button:hover {
   color: #000;
 }
 
@@ -108,4 +120,7 @@ p {
 }
 .firebaseui-card-content {
   padding: 0;
+}
+.firebaseui-list-item {
+  text-align: left;
 }

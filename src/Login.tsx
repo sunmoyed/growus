@@ -1,20 +1,22 @@
 import React from "react";
-import { FirebaseAuth } from "react-firebaseui";
-import { auth, uiConfigBase } from "./Auth";
-
-const uiConfig = uiConfigBase;
-uiConfig.callbacks.signInSuccessWithAuthResult = () => {
-  console.log("signed in");
-  return false;
-};
+import { FirebaseLogin } from "./Auth";
+import { createUser } from "./Database";
 
 class Login extends React.PureComponent {
+  handleLoginSuccess = async result => {
+    if (result.additionalUserInfo.isNewUser) {
+      const user = await createUser(result.user);
+      console.log("new user created", user);
+    }
+    return false;
+  };
+
   render() {
     return (
-      <div>
-        <h3>Log in</h3>
-        <FirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />
-      </div>
+      <React.Fragment>
+        <p>Which person are you?</p>
+        <FirebaseLogin onSuccess={this.handleLoginSuccess} />
+      </React.Fragment>
     );
   }
 }
