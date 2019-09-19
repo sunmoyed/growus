@@ -1,4 +1,6 @@
 export type User = {
-  name?: string | null;
-  photoURL?: string | null;
+  displayName: string;
+  imgSrc: string;
+  username: string;
+  updatedTime?;
 };

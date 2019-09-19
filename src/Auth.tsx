@@ -1,5 +1,8 @@
+import React from "react";
+import { FirebaseAuth } from "react-firebaseui";
 import firebase from "firebase/app";
 import "firebase/auth";
+import "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBxeS2P_8hW_RpNGhcAzq5kHhi3B6dVwM0",
@@ -12,12 +15,27 @@ const firebaseConfig = {
 };
 
 export const firebaseApp = firebase.initializeApp(firebaseConfig);
-export const firebaseAuth = firebase.auth;
+export const auth = firebase.auth();
+const githubProvider = new firebase.auth.GithubAuthProvider();
 
-export const uiConfigBase = {
+export const reauthenticate = async user => {
+  return user.reauthenticateWithPopup(githubProvider);
+};
+
+const uiConfigBase = {
   callbacks: {
-    signInSuccessWithAuthResult: () => false
+    signInSuccessWithAuthResult: authResult => {
+      console.log(authResult);
+      return false;
+    }
   },
   signInFlow: "popup",
-  signInOptions: [firebaseAuth.GithubAuthProvider.PROVIDER_ID]
+  signInOptions: [firebase.auth.GithubAuthProvider.PROVIDER_ID]
+};
+
+export const FirebaseLogin = ({ onSuccess }) => {
+  const uiConfig = uiConfigBase;
+  uiConfig.callbacks.signInSuccessWithAuthResult = onSuccess;
+
+  return <FirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />;
 };
