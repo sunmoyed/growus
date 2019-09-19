@@ -15,8 +15,8 @@ const EMPTY_USER = {
 export const db = firebaseApp.firestore();
 const usersRef = db.collection(COLLECTION.USERS);
 
-const date = new Date();
 export async function createUser(user: FirebaseUser) {
+  const date = new Date();
   const accountInfo = {
     ...getProfileInfoFromProvider(user),
     createdTime: date.toString()
