@@ -40,10 +40,9 @@ const initializeWatchers = (encouragementsRef, onEncouragementsChange) => {
 };
 
 export async function createUser(user: FirebaseUser) {
-  const date = new Date();
   const accountInfo = {
     ...getProfileInfoFromProvider(user),
-    createdTime: date.toString()
+    created: currentTime()
   };
   console.log(accountInfo);
 
@@ -53,10 +52,9 @@ export async function createUser(user: FirebaseUser) {
 }
 
 export async function updateUser(uid, data) {
-  const date = new Date();
   const accountInfo = {
     ...data,
-    updatedTime: date.toString()
+    updated: currentTime()
   };
 
   const userRef = REFS.user || (await REFS.users.doc(uid));
@@ -87,7 +85,8 @@ function getProfileInfoFromProvider(user: FirebaseUser | null): User {
 export async function createEncouragement(text) {
   const metadata: Encouragement = {
     text,
-    editor: REFS.user
+    editor: REFS.user,
+    created: currentTime()
   };
 
   REFS.encouragements.add({ ...metadata });
@@ -137,4 +136,8 @@ function snapshotToList(snapshot: firestore.QuerySnapshot | null) {
     list.push(data);
   });
   return list;
+}
+
+function currentTime() {
+  return new Date();
 }

@@ -20,7 +20,7 @@ const EMPTY_USER = {
   username: "",
   displayName: "",
   imgSrc: "",
-  updatedTime: null
+  updated: null
 };
 
 export default class Profile extends React.PureComponent<ProfileProps, State> {
@@ -50,6 +50,8 @@ export default class Profile extends React.PureComponent<ProfileProps, State> {
 
   updateAccount = async e => {
     e.preventDefault();
+    const { onUserUpdate } = this.props;
+
     const appUser = auth.currentUser;
     const form = new FormData(e.target);
     const userData = {
@@ -59,6 +61,7 @@ export default class Profile extends React.PureComponent<ProfileProps, State> {
 
     if (appUser) {
       updateUser(appUser.uid, userData);
+      onUserUpdate && onUserUpdate(appUser);
     }
   };
 
@@ -85,10 +88,12 @@ export default class Profile extends React.PureComponent<ProfileProps, State> {
   render() {
     const { error } = this.state;
     const { userData = EMPTY_USER } = this.props;
-    const updatedTime = userData ? new Date(userData.updatedTime) : null;
+    const updated =
+      userData && userData.updated ? userData.updated.toDate() : null;
 
     return (
-      <React.Fragment>
+      <div className="section">
+        <h3>Profile</h3>
         {error && <p style={{ color: "red" }}>{error}</p>}
         <form className="section" onSubmit={this.updateAccount}>
           <label>
@@ -109,17 +114,16 @@ export default class Profile extends React.PureComponent<ProfileProps, State> {
           </label>
           <button type="submit">that's me</button>
         </form>
-        {updatedTime && (
+        {updated && (
           <p>
-            updated {updatedTime.toLocaleTimeString()}{" "}
-            {updatedTime.toDateString()}
+            updated {updated.toLocaleTimeString()} {updated.toDateString()}
           </p>
         )}
 
         <button className="text-button" onClick={this.deleteAccount}>
           delete account
         </button>
-      </React.Fragment>
+      </div>
     );
   }
 }
