@@ -4,3 +4,9 @@ export type User = {
   username: string;
   updatedTime?;
 };
+
+export type Encouragement = {
+  id?: string;
+  text: string;
+  editor;
+};

@@ -16,7 +16,7 @@ const EMPTY_USER = {
 };
 
 const Loading = () => {
-  return <div>loading...</div>;
+  return null;
 };
 
 const Page = ({ user, ...props }) => {

@@ -1,10 +1,7 @@
 import { firebaseApp } from "./Auth";
+import { firestore } from "firebase/app"; // types
 import { User as FirebaseUser } from "firebase/app";
-import { User } from "./types";
-
-const COLLECTION = {
-  USERS: "users"
-};
+import { Encouragement, User } from "./types";
 
 const EMPTY_USER = {
   username: "",
@@ -12,20 +9,47 @@ const EMPTY_USER = {
   imgSrc: ""
 };
 
-export const db = firebaseApp.firestore();
-const usersRef = db.collection(COLLECTION.USERS);
+interface refsType {
+  users: firestore.CollectionReference;
+  encouragements: firestore.CollectionReference;
+  user: firestore.DocumentReference | null;
+}
 
-const date = new Date();
+export const db = firebaseApp.firestore();
+
+let REFS: refsType = {
+  users: db.collection("users"),
+  encouragements: db.collection("encouragements"),
+
+  user: null
+};
+
+let SNAPSHOTS: { encouragements: firestore.QuerySnapshot | null } = {
+  encouragements: null
+};
+
+let watchersInitialised = false;
+
+const initializeWatchers = (encouragementsRef, onEncouragementsChange) => {
+  if (!watchersInitialised) {
+    encouragementsRef.onSnapshot(snapshot => {
+      onEncouragementsChange(snapshotToList(snapshot));
+    });
+    watchersInitialised = true;
+  }
+};
+
 export async function createUser(user: FirebaseUser) {
+  const date = new Date();
   const accountInfo = {
     ...getProfileInfoFromProvider(user),
     createdTime: date.toString()
   };
   console.log(accountInfo);
 
-  const userRef = await usersRef.doc(user.uid);
-  userRef.set(accountInfo);
-  return getDoc(userRef);
+  REFS.user = await REFS.users.doc(user.uid);
+  REFS.user.set(accountInfo);
+  return getDoc(REFS.user);
 }
 
 export async function updateUser(uid, data) {
@@ -34,18 +58,19 @@ export async function updateUser(uid, data) {
     ...data,
     updatedTime: date.toString()
   };
-  const userRef = await usersRef.doc(uid);
+
+  const userRef = REFS.user || (await REFS.users.doc(uid));
   userRef.update(accountInfo);
 
-  return getDoc(userRef);
+  return getDoc(REFS.user);
 }
 
 export async function getUser(user: FirebaseUser) {
   if (!user) {
     return EMPTY_USER;
   }
-  const userRef = await usersRef.doc(user.uid);
-  return getDoc(userRef);
+  REFS.user = await REFS.users.doc(user.uid);
+  return getDoc(REFS.user);
 }
 
 function getProfileInfoFromProvider(user: FirebaseUser | null): User {
@@ -59,6 +84,34 @@ function getProfileInfoFromProvider(user: FirebaseUser | null): User {
   return EMPTY_USER;
 }
 
+export async function createEncouragement(text) {
+  const metadata: Encouragement = {
+    text,
+    editor: REFS.user
+  };
+
+  REFS.encouragements.add({ ...metadata });
+  // note: add returns a ref that you can use:
+  // const encouragementRef = await REFS.encouragements.add({ ...metadata });
+}
+
+export async function deleteEncouragement(id) {
+  REFS.encouragements.doc(id).delete();
+}
+
+export async function getAllEncouragements(onEncouragementsChange) {
+  const snapshot: firestore.QuerySnapshot = await REFS.encouragements.get();
+  SNAPSHOTS.encouragements = snapshot;
+
+  initializeWatchers(REFS.encouragements, onEncouragementsChange);
+
+  const allEncouragements = snapshotToList(snapshot);
+  return allEncouragements;
+
+  // const encouragements: Encouragements = allEncouragements;
+  // return encouragements;
+}
+
 async function getDoc(ref) {
   try {
     const doc = await ref.get();
@@ -69,4 +122,19 @@ async function getDoc(ref) {
   } catch (err) {
     console.log(err);
   }
+}
+
+function snapshotToList(snapshot: firestore.QuerySnapshot | null) {
+  if (snapshot === null) {
+    return;
+  }
+
+  const list: Array<any> = [];
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    // need to add firestore ID because it doesn't come with the data
+    data.id = doc.id;
+    list.push(data);
+  });
+  return list;
 }
