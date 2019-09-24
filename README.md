@@ -31,10 +31,13 @@ Setup for deploy:
 - install firebase tools `npm install -g firebase-tools`
 - log in to firebase `firebase login`
 
-how to deploy firebase
+how to deploy to firebase (available at https://grow-us.web.app)
 
-1. `npm run build`
-2. `firebase deploy`
+1. `npm run deploy`
+
+### problems
+
+1. can't develop with firebase offline ): need better way to mock data
 
 ## npm Scripts
 
