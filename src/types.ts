@@ -8,9 +8,12 @@ export type User = {
   updated?: firestore.Timestamp;
 };
 
-export type Encouragement = {
-  id?: string;
+export type EncouragementData = {
   text: string;
   editor;
   created: firestore.Timestamp;
+};
+
+export type Encouragement = EncouragementData & {
+  id: string;
 };

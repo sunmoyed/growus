@@ -1,7 +1,7 @@
 import { firebaseApp } from "./Auth";
 import { firestore } from "firebase/app"; // types
 import { User as FirebaseUser } from "firebase/app";
-import { Encouragement, User } from "./types";
+import { EncouragementData, User } from "./types";
 
 const EMPTY_USER = {
   username: "",
@@ -28,15 +28,12 @@ let SNAPSHOTS: { encouragements: firestore.QuerySnapshot | null } = {
   encouragements: null
 };
 
-let watchersInitialised = false;
-
 const initializeWatchers = (encouragementsRef, onEncouragementsChange) => {
-  if (!watchersInitialised) {
-    encouragementsRef.onSnapshot(snapshot => {
-      onEncouragementsChange(snapshotToList(snapshot));
+  encouragementsRef.onSnapshot(snapshot => {
+    snapshotToList(snapshot).then(list => {
+      onEncouragementsChange(list);
     });
-    watchersInitialised = true;
-  }
+  });
 };
 
 export async function createUser(user: FirebaseUser) {
@@ -83,32 +80,28 @@ function getProfileInfoFromProvider(user: FirebaseUser | null): User {
 }
 
 export async function createEncouragement(text) {
-  const metadata: Encouragement = {
+  const data: EncouragementData = {
     text,
     editor: REFS.user,
     created: currentTime()
   };
 
-  REFS.encouragements.add({ ...metadata });
+  REFS.encouragements.add({ ...data });
   // note: add returns a ref that you can use:
-  // const encouragementRef = await REFS.encouragements.add({ ...metadata });
+  // const encouragementRef = await REFS.encouragements.add({ ...data });
 }
 
 export async function deleteEncouragement(id) {
   REFS.encouragements.doc(id).delete();
 }
 
-export async function getAllEncouragements(onEncouragementsChange) {
-  const snapshot: firestore.QuerySnapshot = await REFS.encouragements.get();
+export async function watchEncouragements(onEncouragementsChange) {
+  const snapshot: firestore.QuerySnapshot = await REFS.encouragements
+    .orderBy("text", "desc")
+    .get();
   SNAPSHOTS.encouragements = snapshot;
 
   initializeWatchers(REFS.encouragements, onEncouragementsChange);
-
-  const allEncouragements = snapshotToList(snapshot);
-  return allEncouragements;
-
-  // const encouragements: Encouragements = allEncouragements;
-  // return encouragements;
 }
 
 async function getDoc(ref) {
@@ -123,18 +116,41 @@ async function getDoc(ref) {
   }
 }
 
-function snapshotToList(snapshot: firestore.QuerySnapshot | null) {
+async function snapshotToList(snapshot: firestore.QuerySnapshot | null) {
   if (snapshot === null) {
     return;
   }
 
   const list: Array<any> = [];
-  snapshot.forEach(doc => {
+  const docs = snapshot.docs;
+
+  // Neet to use for-of loop instead of `snapshot.forEach` for the async stuff to work D:
+  // https://stackoverflow.com/questions/37576685/using-async-await-with-a-foreach-loop/37576787#37576787
+  for (const doc of docs) {
     const data = doc.data();
-    // need to add firestore ID because it doesn't come with the data
-    data.id = doc.id;
-    list.push(data);
-  });
+    const derefedData = { id: "" };
+
+    // Check for nested refs ): This can't be right
+    await Promise.all(
+      Object.keys(data).map(async key => {
+        const value = data[key];
+        // TODO how do I check if some this is of type documentRef or collectionRef???
+        if (typeof value === "object" && "get" in value) {
+          // get the value of the rested reference
+          const deref = await getDoc(value);
+          derefedData[key] = deref;
+        } else {
+          derefedData[key] = value;
+        }
+      })
+    );
+
+    // need to add firestore ID because it doesn't come with `doc.data()`
+    derefedData.id = doc.id;
+    list.push(derefedData);
+  }
+  snapshot.forEach(async doc => {});
+
   return list;
 }
 

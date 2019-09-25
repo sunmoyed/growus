@@ -2,9 +2,13 @@ import React from "react";
 import {
   createEncouragement,
   deleteEncouragement,
-  getAllEncouragements
+  watchEncouragements
 } from "./Database";
-import { Encouragement as EncouragementType } from "./types";
+import UserBadge from "./User";
+import {
+  Encouragement as EncouragementType,
+  EncouragementData as EncouragementDataType
+} from "./types";
 
 const encouragements = [
   "You got this!!",
@@ -18,24 +22,36 @@ export const RandomEncouragement = () => {
   return <p className="encouragement">{randomEncouragement}</p>;
 };
 
-const Encouragement = ({ onDelete, text }) => {
-  return (
-    <div>
-      <input style={{ marginBottom: "10px" }} type="text" defaultValue={text} />
-      <button
-        style={{ marginLeft: "5px" }}
-        className="text-button"
-        onClick={onDelete}
+type EncouragementProps = EncouragementDataType & { onDelete?: () => void };
+
+class Encouragement extends React.PureComponent<EncouragementProps, {}> {
+  render() {
+    const { editor, onDelete, text } = this.props;
+
+    return (
+      <div
+        className="section"
+        style={{
+          borderLeft: "2px solid #ccc",
+          paddingLeft: "10px"
+        }}
       >
-        x
-      </button>
-    </div>
-  );
-};
+        <div className="encouragement-row">
+          <span>{text}</span>
+          {onDelete && (
+            <button className="text-button" onClick={onDelete}>
+              x
+            </button>
+          )}
+        </div>
+        <UserBadge {...editor} size={18} />
+      </div>
+    );
+  }
+}
 
 type State = {
-  // encouragements?: any;
-  encouragements?: Array<EncouragementType> | [];
+  encouragements: Array<EncouragementType>;
 };
 
 export class Encouragements extends React.PureComponent<{}, State> {
@@ -43,40 +59,32 @@ export class Encouragements extends React.PureComponent<{}, State> {
 
   constructor(props) {
     super(props);
-    this.fetchEncouragements();
+    watchEncouragements(this.handleEncouragementsChange);
   }
 
-  fetchEncouragements = () => {
-    getAllEncouragements(this.handleEncouragementsChange);
-  };
-
-  handleEncouragementsChange = encouragements => {
+  handleEncouragementsChange = (encouragements: Array<EncouragementType>) => {
     this.setState({ encouragements });
   };
 
   render() {
-    const { encouragements } = this.state;
+    const { encouragements }: State = this.state;
 
     return (
       <div className="section">
         <h3>Encouragements</h3>{" "}
-        <div
-          style={{
-            margin: "10px",
-            borderLeft: "2px solid #ccc",
-            paddingLeft: "10px"
-          }}
-        >
-          {encouragements.length
-            ? encouragements.map(({ id, text }) => (
+        {encouragements.length
+          ? encouragements.map(({ created, editor, id, text }) => {
+              return (
                 <Encouragement
-                  text={text}
-                  key={id}
+                  key={`${id}-${editor}`}
+                  created={created}
+                  editor={editor}
                   onDelete={() => deleteEncouragement(id)}
+                  text={text}
                 />
-              ))
-            : "(none yet)"}
-        </div>
+              );
+            })
+          : null}
       </div>
     );
   }
