@@ -10,16 +10,34 @@ import {
   EncouragementData as EncouragementDataType
 } from "./types";
 
-const encouragements = [
-  "You got this!!",
-  "If you didn't get it this time, you'll get it next time!"
-];
 
-export const RandomEncouragement = () => {
-  const randomEncouragement =
+export class RandomEncouragement extends React.PureComponent<{}, {encouragements: Array<EncouragementType>}> {
+  state = {
+     encouragements: [],
+  }
+
+  constructor(props) {
+    super(props);
+    watchEncouragements(this.updateEncouragements)
+    
+  }
+
+  updateEncouragements = (newEncouragements: Array<EncouragementType>) => {
+    this.setState({ encouragements: newEncouragements });
+  }
+
+  render() {
+    const {encouragements} = this.state
+    
+    const randomEncouragement: EncouragementType =
     encouragements[Math.floor(Math.random() * encouragements.length)];
 
-  return <p className="encouragement">{randomEncouragement}</p>;
+    if (!randomEncouragement) {
+      return null
+    } else {
+      return (<p className="encouragement">{randomEncouragement.editor.displayName}: {randomEncouragement.text}</p>);
+    }
+  }
 };
 
 type EncouragementProps = EncouragementDataType & { onDelete?: () => void };
