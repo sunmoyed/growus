@@ -8,6 +8,7 @@ import { User as FirebaseUser } from "firebase/app";
 
 import { auth } from "./Auth";
 import { getUser } from "./Database";
+import UserBadge from "./User";
 
 const EMPTY_USER = {
   username: "",
@@ -102,13 +103,7 @@ const NavBar = ({ onSignOut, user }) => {
   }
   return (
     <div>
-      <img
-        className="user-icon"
-        src={user.imgSrc || ""}
-        alt={`user icon ${user.displayName}`}
-        title={`that's you, ${user.displayName}`}
-      />{" "}
-      {user.username || "friend"} (
+      <UserBadge {...user} size={30} /> (
       <button className="text-button" onClick={onSignOut}>
         logout
       </button>

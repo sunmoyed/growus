@@ -4,12 +4,13 @@ export type User = {
   displayName: string;
   imgSrc: string;
   username: string;
-  updated?;
+  created?: firestore.Timestamp;
+  updated?: firestore.Timestamp;
 };
 
 export type Encouragement = {
   id?: string;
   text: string;
   editor;
-  created: Date;
+  created: firestore.Timestamp;
 };

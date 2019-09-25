@@ -139,5 +139,5 @@ function snapshotToList(snapshot: firestore.QuerySnapshot | null) {
 }
 
 function currentTime() {
-  return new Date();
+  return firestore.Timestamp.fromDate(new Date());
 }
