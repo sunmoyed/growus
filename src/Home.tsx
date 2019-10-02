@@ -4,6 +4,7 @@ import Encouragements, {
   RandomEncouragement,
   AddEncouragement
 } from "./Encouragement";
+import Exercises from "./Exercises"
 
 type Props = ProfileProps;
 type State = {
@@ -56,6 +57,12 @@ export default class Home extends React.Component<Props, State> {
       >
         encouragements
       </button>
+      <button
+        className="text-button"
+        onClick={() => this.changePage("/exercises")}
+      >
+        exercises
+      </button>
     </div>
   );
 
@@ -81,6 +88,14 @@ export default class Home extends React.Component<Props, State> {
             <AddEncouragement />
           </div>
         );
+        case "/exercises":
+          return (
+            <div>
+              <Navigation />
+              <RandomEncouragement />
+              <Exercises />
+            </div>
+          );
       case "/":
       default:
         return (
