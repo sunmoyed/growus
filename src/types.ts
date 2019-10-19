@@ -21,7 +21,8 @@ export type Encouragement = EncouragementData & {
 export type Exercise = {
   name: string;
   description?: string;
-  tags?: string[];
+  category?: string;
+  userid: string;
 };
 
 export type Workout = {

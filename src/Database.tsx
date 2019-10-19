@@ -13,6 +13,7 @@ interface refsType {
   users: firestore.CollectionReference;
   encouragements: firestore.CollectionReference;
   user: firestore.DocumentReference | null;
+  exercises: firestore.CollectionReference;
 }
 
 export const db = firebaseApp.firestore();
@@ -20,20 +21,9 @@ export const db = firebaseApp.firestore();
 let REFS: refsType = {
   users: db.collection("users"),
   encouragements: db.collection("encouragements"),
+  exercises: db.collection("exercises"),
 
   user: null
-};
-
-let SNAPSHOTS: { encouragements: firestore.QuerySnapshot | null } = {
-  encouragements: null
-};
-
-const initializeWatchers = (encouragementsRef, onEncouragementsChange) => {
-  encouragementsRef.onSnapshot(snapshot => {
-    snapshotToList(snapshot).then(list => {
-      onEncouragementsChange(list);
-    });
-  });
 };
 
 export async function createUser(user: FirebaseUser) {
@@ -96,12 +86,31 @@ export async function deleteEncouragement(id) {
 }
 
 export async function watchEncouragements(onEncouragementsChange) {
-  const snapshot: firestore.QuerySnapshot = await REFS.encouragements
-    .orderBy("text", "desc")
-    .get();
-  SNAPSHOTS.encouragements = snapshot;
+  await REFS.encouragements.orderBy("text", "desc").get();
 
-  initializeWatchers(REFS.encouragements, onEncouragementsChange);
+  REFS.encouragements.onSnapshot(snapshot => {
+    snapshot.query
+      .orderBy("text", "desc")
+      .get()
+      .then(result =>
+        snapshotToList(result).then(list => {
+          onEncouragementsChange(list);
+        })
+      );
+  });
+}
+
+export async function watchExercises(onExercisesChange) {
+  REFS.exercises.onSnapshot(snapshot => {
+    snapshot.query
+      .where("userid", "==", REFS && REFS.user ? REFS.user.id : "")
+      .get()
+      .then(result =>
+        snapshotToList(result).then(list => {
+          onExercisesChange(list);
+        })
+      );
+  });
 }
 
 async function getDoc(ref) {
