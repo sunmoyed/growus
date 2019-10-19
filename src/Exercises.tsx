@@ -1,8 +1,8 @@
 import React from "react";
 import { Exercise } from "./types";
-import { watchExercises } from "./Database";
-import { async } from "q";
-import { create } from "istanbul-reports";
+import { createExercise, watchExercises } from "./Database";
+// import { async } from "q";
+// import { create } from "istanbul-reports";
 
 export default class Exercises extends React.PureComponent {
   state = { exercises: [] };
@@ -40,10 +40,10 @@ export default class Exercises extends React.PureComponent {
             );
           })}
         </ul>
-        <form className="section" onSubmit={() => {}}>
+        <form className="section" onSubmit={this.newExercise}>
           <label>
             Enter a new exercise!
-            <input type="text" name="exercise" defaultValue={""} />
+            <input type="text" name="name" defaultValue={""} />
             <input
               type="text"
               name="description"

@@ -1,7 +1,7 @@
 import { firebaseApp } from "./Auth";
 import { firestore } from "firebase/app"; // types
 import { User as FirebaseUser } from "firebase/app";
-import { EncouragementData, User } from "./types";
+import { EncouragementData, User, Exercise } from "./types";
 
 const EMPTY_USER = {
   username: "",
@@ -111,6 +111,15 @@ export async function watchExercises(onExercisesChange) {
         })
       );
   });
+}
+
+export async function createExercise(name, description) {
+  const data: Exercise = {
+    name: name,
+    description: description,
+    userid: REFS.user ? REFS.user.id : ""
+  };
+  REFS.exercises.add({ ...data });
 }
 
 async function getDoc(ref) {
