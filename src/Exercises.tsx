@@ -1,8 +1,6 @@
 import React from "react";
 import { Exercise } from "./types";
 import { createExercise, watchExercises } from "./Database";
-// import { async } from "q";
-// import { create } from "istanbul-reports";
 
 export default class Exercises extends React.PureComponent {
   state = { exercises: [] };
