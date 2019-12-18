@@ -17,3 +17,16 @@ export type EncouragementData = {
 export type Encouragement = EncouragementData & {
   id: string;
 };
+
+export type Exercise = {
+  name: string;
+  description?: string;
+  category?: string;
+  userid: string;
+};
+
+export type Workout = {
+  name: string;
+  description?: string;
+  exercises: Exercise[];
+};
