@@ -51,6 +51,7 @@ header h2 {
 
 .list-row {
   display: inline-flex;
+  flex-wrap: wrap;
   grid-column-gap: 12px;
   margin-bottom: 10px;
 }
