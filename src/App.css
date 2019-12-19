@@ -60,7 +60,8 @@ label {
   margin-bottom: 10px;
   display: block;
 }
-label input {
+label input,
+label select {
   width: 100%;
 }
 
