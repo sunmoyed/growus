@@ -1,27 +1,35 @@
 import React from "react";
 import { Workout } from "./types";
-import { createJournalEntry, watchWorkouts } from "./Database";
+import { createJournalEntry, watchWorkouts, watchEntries } from "./Database";
 import { NEW_WORKOUT } from "./Workouts";
 
 export default class Journal extends React.PureComponent {
-  state = { workouts: [] };
+  state = { workouts: [], entries: [] };
 
   constructor(props) {
     super(props);
     watchWorkouts(this.handleWorkoutsChange);
+    watchEntries(this.handleEntriesChange);
   }
 
   handleWorkoutsChange = (workouts: Array<Workout>) => {
     this.setState({ workouts });
   };
 
+  handleEntriesChange = (entries: Array<JournalEntry>) => {
+    this.setState({ entries });
+  };
+
   render() {
-    const { workouts } = this.state;
+    const { entries, workouts } = this.state;
 
     return (
       <div>
         <h3>Your Journal</h3>
         <JournalEntry workouts={workouts} />
+        {entries.map(entry => (
+          <JournalEntryDisplay {...entry} />
+        ))}
       </div>
     );
   }
@@ -130,3 +138,18 @@ class JournalEntry extends React.PureComponent<
     );
   }
 }
+
+const JournalEntryDisplay = ({ content, title, workout, entryTime }) => {
+  console.log(entryTime);
+  return (
+    <div className="section section-border">
+      <h4>{title}</h4>
+      <p>{entryTime.toDate().toLocaleString()}</p>
+      <p>{content}</p>
+      <p>
+        <b>workout: </b>
+        {workout.title}
+      </p>
+    </div>
+  );
+};

@@ -166,6 +166,19 @@ export async function updateWorkout(id, data) {
   REFS.workouts.doc(id).update(workoutData);
 }
 
+export async function watchEntries(onEntriesChange) {
+  REFS.entries.onSnapshot(snapshot => {
+    snapshot.query
+      .where("userid", "==", REFS && REFS.user ? REFS.user.id : "")
+      .get()
+      .then(result =>
+        snapshotToList(result).then(list => {
+          onEntriesChange(list);
+        })
+      );
+  });
+}
+
 export async function createJournalEntry(title, content, workout) {
   const data: JournalEntry = {
     title,
