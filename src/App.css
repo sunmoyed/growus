@@ -75,7 +75,8 @@ label {
   display: block;
 }
 label input,
-label select {
+label select,
+textarea {
   width: 100%;
 }
 

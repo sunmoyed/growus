@@ -19,7 +19,7 @@ const WORKOUT_COLORS = [
   "95b5ff"
 ];
 
-const NEW_WORKOUT = {
+export const NEW_WORKOUT = {
   title: "",
   description: "",
   exercises: [],

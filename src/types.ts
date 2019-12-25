@@ -35,3 +35,12 @@ export type Workout = {
   id?: string;
   color: string; // TODO validate
 };
+
+export type JournalEntry = {
+  title: string;
+  content?: string;
+  workout: Workout;
+  userid: string;
+  id?: string;
+  entryTime?: firestore.Timestamp;
+};

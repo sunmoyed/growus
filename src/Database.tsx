@@ -1,7 +1,13 @@
 import { firebaseApp } from "./Auth";
 import { firestore } from "firebase/app"; // types
 import { User as FirebaseUser } from "firebase/app";
-import { EncouragementData, User, Exercise, Workout } from "./types";
+import {
+  EncouragementData,
+  User,
+  Exercise,
+  Workout,
+  JournalEntry
+} from "./types";
 
 const EMPTY_USER = {
   username: "",
@@ -15,6 +21,7 @@ interface refsType {
   user: firestore.DocumentReference | null;
   exercises: firestore.CollectionReference;
   workouts: firestore.CollectionReference;
+  entries: firestore.CollectionReference;
 }
 
 export const db = firebaseApp.firestore();
@@ -24,6 +31,7 @@ let REFS: refsType = {
   encouragements: db.collection("encouragements"),
   exercises: db.collection("exercises"),
   workouts: db.collection("workouts"),
+  entries: db.collection("entries"),
 
   user: null
 };
@@ -156,6 +164,17 @@ export async function updateWorkout(id, data) {
   };
 
   REFS.workouts.doc(id).update(workoutData);
+}
+
+export async function createJournalEntry(title, content, workout) {
+  const data: JournalEntry = {
+    title,
+    content,
+    workout,
+    entryTime: currentTime(),
+    userid: REFS.user ? REFS.user.id : ""
+  };
+  REFS.entries.add({ ...data });
 }
 
 export async function deleteWorkout(id) {
