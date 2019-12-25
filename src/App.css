@@ -29,12 +29,21 @@ footer,
   margin-bottom: 16px;
 }
 
+.section-border {
+  border-left: 2px solid #ccc;
+  padding-left: 10px;
+}
+
 header .container {
   border-bottom: 3px solid #a7e4f0;
 }
 
 header h2 {
   font-size: 1.2em;
+}
+
+.error {
+  color: red;
 }
 
 .encouragement {

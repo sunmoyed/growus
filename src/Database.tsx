@@ -1,7 +1,7 @@
 import { firebaseApp } from "./Auth";
 import { firestore } from "firebase/app"; // types
 import { User as FirebaseUser } from "firebase/app";
-import { EncouragementData, User, Exercise } from "./types";
+import { EncouragementData, User, Exercise, Workout } from "./types";
 
 const EMPTY_USER = {
   username: "",
@@ -14,6 +14,7 @@ interface refsType {
   encouragements: firestore.CollectionReference;
   user: firestore.DocumentReference | null;
   exercises: firestore.CollectionReference;
+  workouts: firestore.CollectionReference;
 }
 
 export const db = firebaseApp.firestore();
@@ -22,6 +23,7 @@ let REFS: refsType = {
   users: db.collection("users"),
   encouragements: db.collection("encouragements"),
   exercises: db.collection("exercises"),
+  workouts: db.collection("workouts"),
 
   user: null
 };
@@ -120,6 +122,42 @@ export async function createExercise(name, description) {
     userid: REFS.user ? REFS.user.id : ""
   };
   REFS.exercises.add({ ...data });
+}
+
+export async function watchWorkouts(onWorkoutsChange) {
+  REFS.workouts.onSnapshot(snapshot => {
+    snapshot.query
+      .where("userid", "==", REFS && REFS.user ? REFS.user.id : "")
+      .get()
+      .then(result =>
+        snapshotToList(result).then(list => {
+          onWorkoutsChange(list);
+        })
+      );
+  });
+}
+
+export async function createWorkout(title, description, exercises) {
+  const data: Workout = {
+    title: title,
+    description: description,
+    exercises: exercises,
+    userid: REFS.user ? REFS.user.id : ""
+  };
+  REFS.workouts.add({ ...data });
+}
+
+export async function updateWorkout(id, data) {
+  const workoutData = {
+    ...data,
+    updated: currentTime()
+  };
+
+  REFS.workouts.doc(id).update(workoutData);
+}
+
+export async function deleteWorkout(id) {
+  REFS.workouts.doc(id).delete();
 }
 
 async function getDoc(ref) {

@@ -23,10 +23,13 @@ export type Exercise = {
   description?: string;
   category?: string;
   userid: string;
+  id?: string;
 };
 
 export type Workout = {
-  name: string;
+  title: string;
   description?: string;
-  exercises: Exercise[];
+  exercises: Array<string>;
+  userid: string;
+  id?: string;
 };
