@@ -10,7 +10,7 @@ footer,
 .page {
   flex: 0 0 auto;
   display: flex;
-  background: rgb(237, 245, 245);
+  /* background: rgb(237, 245, 245); */
 }
 
 .page {

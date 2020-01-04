@@ -1,15 +1,15 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "grow us",
+  "name": "grow us 🌱 an encouraging journal",
   "icons": [
     {
-      "src": "favicon.ico",
+      "src": "favicon-1.ico",
       "sizes": "32x32 16x16",
       "type": "image/x-icon"
     }
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
+  "theme_color": "#a7e4f0",
   "background_color": "#ffffff"
 }
