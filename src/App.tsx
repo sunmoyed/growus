@@ -66,12 +66,6 @@ class App extends React.Component {
     this.setState({ userData });
   };
 
-  handleSignOut = e => {
-    e.preventDefault();
-    this.setState({ specialMessage: "bye" });
-    auth.signOut();
-  };
-
   render() {
     const { user, userData } = this.state;
 
@@ -79,10 +73,12 @@ class App extends React.Component {
       <div className="App">
         <header>
           <div className="container">
+            <a href="/">
             <h2>
               let's grow us <img src={logo} className="App-logo" alt="logo" />
             </h2>
-            <NavBar onSignOut={this.handleSignOut} user={userData} />
+            </a>
+            <NavBar user={userData} />
           </div>
         </header>
         <div className="page">
@@ -101,17 +97,13 @@ class App extends React.Component {
 
 export default App;
 
-const NavBar = ({ onSignOut, user }) => {
+const NavBar = ({ user }) => {
   if (!user || !user.displayName) {
     return null;
   }
   return (
     <div>
-      <UserBadge {...user} size={30} /> (
-      <button className="text-button" onClick={onSignOut}>
-        logout
-      </button>
-      )
+      <UserBadge {...user} size={30} />
     </div>
   );
 };

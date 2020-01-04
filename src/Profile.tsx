@@ -66,6 +66,13 @@ export default class Profile extends React.PureComponent<ProfileProps, State> {
   };
 
   deleteAccount = async () => {
+    if (
+      !window.confirm(
+        "do you want to delete your account? you won't be able to get it back."
+      )
+    ) {
+      return;
+    }
     const { onUserUpdate } = this.props;
     const appUser = auth.currentUser;
 
@@ -83,6 +90,11 @@ export default class Profile extends React.PureComponent<ProfileProps, State> {
         }
       }
     }
+  };
+
+  handleSignOut = e => {
+    e.preventDefault();
+    auth.signOut();
   };
 
   render() {
@@ -116,13 +128,19 @@ export default class Profile extends React.PureComponent<ProfileProps, State> {
         </form>
         {updated && (
           <p>
-            updated {updated.toLocaleTimeString()} {updated.toDateString()}
+            updated {updated.toDateString()} {updated.toLocaleTimeString()}
           </p>
         )}
-
-        <button className="text-button" onClick={this.deleteAccount}>
-          delete account
-        </button>
+        <p>
+          <button className="text-button" onClick={this.handleSignOut}>
+            logout
+          </button>
+        </p>
+        <p>
+          <button className="text-button" onClick={this.deleteAccount}>
+            delete account
+          </button>
+        </p>
       </div>
     );
   }

@@ -1,11 +1,18 @@
 import React from "react";
 // import { User } from "./types";
 
-const UserBadge = ({ displayName, imgSrc, username, size = 24 }) => (
+const UserBadge = ({
+  displayName,
+  imgSrc,
+  username,
+  size = 24,
+  subtitle,
+  verb = "did a",
+  noun
+}) => (
   <div
+    className="user-badge"
     style={{
-      display: "inline-grid",
-      gridTemplateColumns: "min-content auto",
       gridGap: size * 0.3
     }}
   >
@@ -15,7 +22,18 @@ const UserBadge = ({ displayName, imgSrc, username, size = 24 }) => (
       size={size}
       username={username}
     />
-    <span>{displayName}</span>
+    <div style={{ display: "flex", flexDirection: "column" }}>
+      <span>
+        <b>{displayName}</b>
+        {noun && (
+          <React.Fragment>
+            {" "}
+            <small>{verb}</small> {noun} ✨
+          </React.Fragment>
+        )}
+      </span>
+      {subtitle && <small>{subtitle}</small>}
+    </div>
   </div>
 );
 export default UserBadge;
