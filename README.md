@@ -20,7 +20,7 @@ Set up the frontend dependencies, one-time:
 To run the web app locally, every time:
 
 5. run the local server: `npm start`
-6. npm will aggressively open up a new browser tab at `http://localhost:3000`, where you can see your web app.
+6. npm will aggressively open up a new browser tab at `http://localhost:3000`, where you can see your web app. (To not auto-open browser, run `BROWSER=none npm start` instead)
 7. ~~to run the backend locally: `firebase serve`~~ actually I have no idea how this works
 
 ### How to deploy

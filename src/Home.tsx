@@ -4,7 +4,8 @@ import Encouragements, {
   RandomEncouragement,
   AddEncouragement
 } from "./Encouragement";
-import Exercises from "./Exercises"
+import Exercises from "./Exercises";
+import Workouts from "./Workouts";
 
 type Props = ProfileProps;
 type State = {
@@ -63,6 +64,12 @@ export default class Home extends React.Component<Props, State> {
       >
         exercises
       </button>
+      <button
+        className="text-button"
+        onClick={() => this.changePage("/workouts")}
+      >
+        workouts
+      </button>
     </div>
   );
 
@@ -88,14 +95,21 @@ export default class Home extends React.Component<Props, State> {
             <AddEncouragement />
           </div>
         );
-        case "/exercises":
-          return (
-            <div>
-              <Navigation />
-              <RandomEncouragement />
-              <Exercises />
-            </div>
-          );
+      case "/exercises":
+        return (
+          <div>
+            <Navigation />
+            <RandomEncouragement />
+            <Exercises />
+          </div>
+        );
+      case "/workouts":
+        return (
+          <div>
+            <Navigation />
+            <Workouts />
+          </div>
+        );
       case "/":
       default:
         return (
