@@ -80,6 +80,12 @@ h3 {
   fill: currentColor;
 }
 
+.user-badge {
+  display: inline-grid;
+  grid-template-columns: min-content auto;
+  align-items: baseline;
+}
+
 .user-icon {
   width: 24px;
   height: 24px;
