@@ -1,5 +1,9 @@
 import React from "react";
 import logo from "./logo.svg";
+
+// base css library imported first
+// https://github.com/kognise/water.css
+import "./water-light.css";
 import "./App.css";
 import Home from "./Home";
 import Login from "./Login";
