@@ -58,6 +58,11 @@ header h2 {
   margin-bottom: 10px;
 }
 
+.workout {
+  border-left: 3px solid #dcdae3;
+  padding-inline-start: 10px;
+}
+
 .list-row {
   display: inline-flex;
   flex-wrap: wrap;

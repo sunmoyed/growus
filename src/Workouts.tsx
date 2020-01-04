@@ -63,7 +63,7 @@ export default class Workouts extends React.PureComponent {
 
     return (
       <div>
-        <h3>Workouts</h3>
+        <h3>New workout</h3>
         <EditWorkout workout={NEW_WORKOUT} exerciseBank={exerciseBank} />
         <h3>Your workouts :)</h3>
         {workouts.map((workout: Workout) => (
@@ -157,7 +157,7 @@ class EditWorkout extends React.PureComponent<
     );
 
     return (
-      <div className="section">
+      <div className="section workout">
         {error && <p className="error">{error}</p>}
         <form onSubmit={this.handleCreateWorkout}>
           <label>
@@ -176,11 +176,14 @@ class EditWorkout extends React.PureComponent<
               placeholder="workout description"
             />
           </label>
-          <ColorPicker
-            colors={WORKOUT_COLORS}
-            color={color}
-            onColorClick={this.handleColorPick}
-          />
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <span>Color marker: </span>
+            <ColorPicker
+              colors={WORKOUT_COLORS}
+              color={color}
+              onColorClick={this.handleColorPick}
+            />
+          </div>
           <h4>exercises:</h4>
           <ul>
             {workoutExercises.map((exercise, index) => {
