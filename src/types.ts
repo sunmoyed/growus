@@ -23,6 +23,7 @@ export type Exercise = {
   description?: string;
   category?: string;
   userid: string;
+  creator?;
   id?: string;
 };
 
@@ -32,4 +33,5 @@ export type Workout = {
   exercises: Array<string>;
   userid: string;
   id?: string;
+  color: string; // TODO validate
 };

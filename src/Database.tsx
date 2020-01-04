@@ -105,7 +105,7 @@ export async function watchEncouragements(onEncouragementsChange) {
 export async function watchExercises(onExercisesChange) {
   REFS.exercises.onSnapshot(snapshot => {
     snapshot.query
-      .where("userid", "==", REFS && REFS.user ? REFS.user.id : "")
+      .where("creator", "==", REFS.user)
       .get()
       .then(result =>
         snapshotToList(result).then(list => {
@@ -119,7 +119,8 @@ export async function createExercise(name, description) {
   const data: Exercise = {
     name: name,
     description: description,
-    userid: REFS.user ? REFS.user.id : ""
+    userid: REFS.user ? REFS.user.id : "",
+    creator: REFS.user
   };
   REFS.exercises.add({ ...data });
 }
@@ -137,12 +138,13 @@ export async function watchWorkouts(onWorkoutsChange) {
   });
 }
 
-export async function createWorkout(title, description, exercises) {
+export async function createWorkout(title, description, exercises, color) {
   const data: Workout = {
     title: title,
     description: description,
-    exercises: exercises,
-    userid: REFS.user ? REFS.user.id : ""
+    exercises: exercises, // TODO should be references
+    userid: REFS.user ? REFS.user.id : "",
+    color: color
   };
   REFS.workouts.add({ ...data });
 }

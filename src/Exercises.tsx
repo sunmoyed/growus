@@ -26,6 +26,27 @@ export default class Exercises extends React.PureComponent {
 
     return (
       <div>
+        <h3>Exercises</h3>
+        <form className="section" onSubmit={this.newExercise}>
+          <label>
+            Create a new exercise!
+            <input
+              type="text"
+              name="name"
+              defaultValue={""}
+              placeholder="exercise name"
+            />
+            <input
+              type="text"
+              name="description"
+              defaultValue={""}
+              placeholder="exercise description"
+            />
+          </label>
+
+          <button type="submit">create</button>
+        </form>
+        <h3>Your exercises</h3>
         <ul>
           {exercises.map((exercise: Exercise, index) => {
             return (
@@ -38,20 +59,6 @@ export default class Exercises extends React.PureComponent {
             );
           })}
         </ul>
-        <form className="section" onSubmit={this.newExercise}>
-          <label>
-            Enter a new exercise!
-            <input type="text" name="name" defaultValue={""} />
-            <input
-              type="text"
-              name="description"
-              defaultValue={""}
-              placeholder="exercise description"
-            />
-          </label>
-
-          <button type="submit">create</button>
-        </form>
       </div>
     );
   }

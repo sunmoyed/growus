@@ -144,6 +144,8 @@ p {
   cursor: pointer;
   color: #555;
   text-decoration: underline #aaa5a5;
+  margin-left: -10px;
+  padding: 0 10px;
 }
 .text-button:hover {
   color: #000;

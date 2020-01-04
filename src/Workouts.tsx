@@ -7,12 +7,24 @@ import {
   deleteWorkout,
   updateWorkout
 } from "./Database";
+import ColorPicker, { ColorSquare } from "./ColorPicker";
+
+const WORKOUT_COLORS = [
+  "ffdbb9",
+  "fff1aa",
+  "cdfba6",
+  "97efc4",
+  "77f5e6",
+  "77d5ff",
+  "95b5ff"
+];
 
 const NEW_WORKOUT = {
   title: "",
   description: "",
   exercises: [],
-  userid: ""
+  userid: "",
+  color: WORKOUT_COLORS[0]
 };
 
 function sortExercises(ids: Array<string>, bank: Array<Exercise>) {
@@ -51,7 +63,7 @@ export default class Workouts extends React.PureComponent {
 
     return (
       <div>
-        <h3>create a new workout</h3>
+        <h3>Workouts</h3>
         <EditWorkout workout={NEW_WORKOUT} exerciseBank={exerciseBank} />
         <h3>Your workouts :)</h3>
         {workouts.map((workout: Workout) => (
@@ -68,14 +80,15 @@ export default class Workouts extends React.PureComponent {
 
 class EditWorkout extends React.PureComponent<
   { workout: Workout; exerciseBank: Array<Exercise> },
-  { error: string; exercises: Array<string> }
+  { color: string; error: string; exercises: Array<string> }
 > {
   state = {
+    color: this.props.workout.color || WORKOUT_COLORS[0],
     error: "",
     exercises: this.props.workout ? this.props.workout.exercises : []
   };
 
-  addExercise = async event => {
+  addExercise = event => {
     const exerciseID = event.target.value;
     if (exerciseID) {
       this.setState(state => {
@@ -109,17 +122,17 @@ class EditWorkout extends React.PureComponent<
     const title = form.get("title");
     const description = form.get("description");
     const { workout } = this.props;
-    const { exercises } = this.state;
+    const { color, exercises } = this.state;
 
     if (!title) {
       this.setState({ error: "The workout needs a title" });
       return;
     }
     if (workout.id) {
-      await updateWorkout(workout.id, { title, description, exercises });
+      await updateWorkout(workout.id, { color, title, description, exercises });
       this.setState({ error: "" });
     } else {
-      createWorkout(title, description, exercises);
+      createWorkout(title, description, exercises, color);
       this.setState({ error: "" });
       event.target.reset();
     }
@@ -133,25 +146,29 @@ class EditWorkout extends React.PureComponent<
     }
   };
 
+  handleColorPick = color => this.setState({ color });
+
   render() {
     const { exerciseBank, workout } = this.props;
-    const { error, exercises } = this.state;
+    const { color, error, exercises } = this.state;
     const [availableExercises, workoutExercises] = sortExercises(
       exercises,
       exerciseBank
     );
 
     return (
-      <div className="section section-border">
+      <div className="section">
         {error && <p className="error">{error}</p>}
-        <form className="section" onSubmit={this.handleCreateWorkout}>
+        <form onSubmit={this.handleCreateWorkout}>
           <label>
             <input
               type="text"
               name="title"
               defaultValue={workout && workout.title}
-              placeholder="new workout"
+              placeholder="workout name"
             />
+          </label>
+          <label>
             <input
               type="text"
               name="description"
@@ -159,7 +176,12 @@ class EditWorkout extends React.PureComponent<
               placeholder="workout description"
             />
           </label>
-          the exercises:
+          <ColorPicker
+            colors={WORKOUT_COLORS}
+            color={color}
+            onColorClick={this.handleColorPick}
+          />
+          <h4>exercises:</h4>
           <ul>
             {workoutExercises.map((exercise, index) => {
               return (
@@ -210,3 +232,10 @@ class EditWorkout extends React.PureComponent<
     );
   }
 }
+
+export const WorkoutLabel = ({ workout }) => (
+  <div style={{ display: "flex", alignItems: "center" }}>
+    <ColorSquare color={workout.color} size={16} />
+    <span style={{ marginLeft: "6px" }}> {workout.title}</span>
+  </div>
+);
