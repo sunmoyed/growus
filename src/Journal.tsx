@@ -56,6 +56,9 @@ export default class Journal extends React.PureComponent {
         {entries.map((entry: Entry, index) => (
           <JournalEntryDisplay key={entry.id ? entry.id : index} {...entry} />
         ))}
+        <p className="descrption">
+          There might be more, but pagination isn't supported yet :^)
+        </p>
       </div>
     );
   }
@@ -82,6 +85,9 @@ export class GroupJournal extends React.PureComponent {
         {entries.map((entry: Entry, index) => (
           <JournalEntryDisplay key={entry.id ? entry.id : index} {...entry} />
         ))}
+        <p className="descrption">
+          There might be more, but pagination isn't supported yet :^)
+        </p>
       </div>
     );
   }
