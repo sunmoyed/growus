@@ -15,7 +15,7 @@ import { User as FirebaseUser } from "firebase/app";
 
 import { auth } from "./Auth";
 import { getUser } from "./Database";
-import UserBadge from "./User";
+import { UserIcon } from "./User";
 
 const EMPTY_USER = {
   username: "",
@@ -75,11 +75,11 @@ class App extends React.Component {
     return (
       <div className="App">
         <header>
-          <div className="container">
+          <div className="container row-with-icon">
             <a href="/">
-            <h2>
-              let's grow us <img src={logo} className="App-logo" alt="logo" />
-            </h2>
+              <h1>
+                let's grow us <img src={logo} className="App-logo" alt="logo" />
+              </h1>
             </a>
             <NavBar user={userData} />
           </div>
@@ -104,9 +104,5 @@ const NavBar = ({ user }) => {
   if (!user || !user.displayName) {
     return null;
   }
-  return (
-    <div>
-      <UserBadge {...user} size={30} />
-    </div>
-  );
+  return <UserIcon {...user} size={30} />;
 };
