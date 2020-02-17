@@ -47,19 +47,57 @@ export default class Exercises extends React.PureComponent {
           <button type="submit">create</button>
         </form>
         <h3>Your exercises</h3>
-        <ul>
-          {exercises.map((exercise: Exercise, index) => {
-            return (
-              <li key={index}>
-                <div>
-                  <b>{exercise.name}</b>
-                </div>
-                <div>{exercise.description}</div>
-              </li>
-            );
-          })}
-        </ul>
+        <ExerciseList
+          exercises={exercises}
+        />
       </div>
     );
   }
 }
+
+export const ExerciseList = ({
+  exercises,
+  onDelete,
+  onEdit
+}: {
+  exercises: Array<Exercise>;
+  onDelete?: (id) => void;
+  onEdit?: (exercise: Exercise) => void;
+}) => (
+  <ul className="description-list">
+    {exercises.map((exercise: Exercise, index) => {
+      return (
+        <li key={index}>
+          <ExerciseDisplay {...exercise} />
+          {(onEdit || onDelete) && (
+            <div>
+              {onEdit && (
+                <button
+                  className="text-button icon-button"
+                  onClick={() => onEdit(exercise)}
+                >
+                  ✎
+                </button>
+              )}
+              {onDelete && (
+                <button
+                  className="text-button icon-button"
+                  onClick={() => onDelete(exercise.id)}
+                >
+                  ×
+                </button>
+              )}
+            </div>
+          )}
+        </li>
+      );
+    })}
+  </ul>
+);
+
+export const ExerciseDisplay = ({ name, description }: Exercise) => (
+  <div>
+    <b style={{ display: "block" }}>{name}</b>
+    <div className="description">{description}</div>
+  </div>
+);
