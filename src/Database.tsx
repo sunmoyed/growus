@@ -1,7 +1,13 @@
 import { firebaseApp } from "./Auth";
 import { firestore } from "firebase/app"; // types
 import { User as FirebaseUser } from "firebase/app";
-import { EncouragementData, User, Exercise, Workout } from "./types";
+import {
+  EncouragementData,
+  User,
+  Exercise,
+  Workout,
+  EntryFirebase
+} from "./types";
 
 const EMPTY_USER = {
   username: "",
@@ -15,6 +21,7 @@ interface refsType {
   user: firestore.DocumentReference | null;
   exercises: firestore.CollectionReference;
   workouts: firestore.CollectionReference;
+  entries: firestore.CollectionReference;
 }
 
 export const db = firebaseApp.firestore();
@@ -24,6 +31,7 @@ let REFS: refsType = {
   encouragements: db.collection("encouragements"),
   exercises: db.collection("exercises"),
   workouts: db.collection("workouts"),
+  entries: db.collection("entries"),
 
   user: null
 };
@@ -156,6 +164,43 @@ export async function updateWorkout(id, data) {
   };
 
   REFS.workouts.doc(id).update(workoutData);
+}
+
+export async function watchEntries(onEntriesChange) {
+  REFS.entries.onSnapshot(snapshot => {
+    snapshot.query
+      .orderBy("entryTime", "desc")
+      .where("userid", "==", REFS && REFS.user ? REFS.user.id : "")
+      .limit(10) // TODO paginate instead of arbitrary limit
+      .get()
+      .then(result =>
+        snapshotToList(result).then(list => {
+          onEntriesChange(list);
+        })
+      );
+  });
+}
+
+export async function getRecentEntries() {
+  const snapshot = await REFS.entries
+    .orderBy("entryTime", "desc")
+    .limit(10) // TODO paginate instead of arbitrary limit
+    .get();
+  const entries = await snapshotToList(snapshot);
+  return entries;
+}
+
+export async function createJournalEntry(title, content, workout) {
+  const data: EntryFirebase = {
+    title,
+    content,
+    workout: REFS.workouts.doc(workout.id), // TODO shoule be pointer instead of instance
+    entryTime: currentTime(), // TODO
+    created: currentTime(),
+    userid: REFS.user ? REFS.user.id : "", // TODO reconcile userid and creator
+    creator: REFS.user
+  };
+  REFS.entries.add({ ...data });
 }
 
 export async function deleteWorkout(id) {

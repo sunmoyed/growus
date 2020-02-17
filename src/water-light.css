@@ -128,7 +128,7 @@ h6,
 b,
 strong,
 th {
-  font-weight: 600;
+  font-weight: bold;
 }
 
 q:before {
@@ -192,6 +192,8 @@ input[type="radio"] {
 input:not([type="checkbox"]):not([type="radio"]),
 select {
   display: block;
+  box-sizing: border-box;
+  padding: 10px 10px 5px 10px;
 }
 
 input,
@@ -265,7 +267,10 @@ input[type="button"]:hover {
   background: var(--button-hover);
 }
 
-input:focus,
+input:focus {
+  box-shadow: 0px 3px 2px -2px var(--focus);
+}
+
 select:focus,
 button:focus,
 textarea:focus {
@@ -350,7 +355,7 @@ fieldset {
 
 legend {
   font-size: 0.9em;
-  font-weight: 600;
+  font-weight: bold;
 }
 
 input[type="range"] {

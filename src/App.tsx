@@ -4,6 +4,9 @@ import logo from "./logo.svg";
 // base css library imported first
 // https://github.com/kognise/water.css
 import "./water-light.css";
+// calendar styles
+import "react-calendar/dist/Calendar.css";
+// app styles
 import "./App.css";
 import Home from "./Home";
 import Login from "./Login";

@@ -6,6 +6,7 @@ import Encouragements, {
 } from "./Encouragement";
 import Exercises from "./Exercises";
 import Workouts from "./Workouts";
+import Journal, { GroupJournal } from "./Journal";
 
 type Props = ProfileProps;
 type State = {
@@ -48,6 +49,12 @@ export default class Home extends React.Component<Props, State> {
     <div className="list-row">
       <button
         className="text-button"
+        onClick={() => this.changePage("/journal")}
+      >
+        journal
+      </button>
+      <button
+        className="text-button"
         onClick={() => this.changePage("/profile")}
       >
         profile
@@ -78,6 +85,13 @@ export default class Home extends React.Component<Props, State> {
     const Navigation = this.navigation;
 
     switch (page) {
+      case "/journal":
+        return (
+          <div>
+            <Navigation />
+            <Journal {...this.props} />
+          </div>
+        );
       case "/profile":
         return (
           <div>
@@ -116,6 +130,7 @@ export default class Home extends React.Component<Props, State> {
           <div>
             <Navigation />
             <RandomEncouragement />
+            <GroupJournal />
           </div>
         );
     }

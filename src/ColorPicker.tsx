@@ -5,6 +5,7 @@ export default class ColorPicker extends React.PureComponent<
     color: string;
     colors: Array<string>;
     onColorClick: (color: string) => void;
+    lineHeight?: number;
     size: number;
   },
   { editMode: boolean }
@@ -23,22 +24,23 @@ export default class ColorPicker extends React.PureComponent<
   };
 
   render() {
-    const { color, colors, size } = this.props;
+    const { color, colors, lineHeight, size } = this.props;
     const { editMode } = this.state;
 
     return (
       <div
         style={{
           position: "relative",
-          height: `${size}px`,
+          height: `${lineHeight || size}px`,
           width: `${size}px`
         }}
       >
         <div
           style={{
             display: "inline-flex",
-            alignItems: "center",
-            position: "absolute"
+            position: "absolute",
+            bottom: 0,
+            gap: "6px"
           }}
         >
           <ColorSquare
@@ -48,7 +50,12 @@ export default class ColorPicker extends React.PureComponent<
             size={size}
           />
           {editMode && (
-            <React.Fragment>
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center"
+              }}
+            >
               {colors.map((color: string) => (
                 <ColorSquare
                   key={color}
@@ -56,7 +63,7 @@ export default class ColorPicker extends React.PureComponent<
                   onColorClick={this.handleSquareClick}
                 />
               ))}
-            </React.Fragment>
+            </div>
           )}
         </div>
       </div>

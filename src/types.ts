@@ -35,3 +35,27 @@ export type Workout = {
   id?: string;
   color: string; // TODO validate
 };
+
+export type EntryFirebase = {
+  title: string;
+  content?: string;
+  workout;
+  // workout: firestore.DocumentReference | Workout;
+  userid: string;
+  creator?;
+  id?: string;
+  entryTime: firestore.Timestamp;
+  created?: firestore.Timestamp;
+};
+
+export type Entry = {
+  title: string;
+  content?: string;
+  workout;
+  // workout: firestore.DocumentReference | Workout;
+  userid: string;
+  creator?;
+  id?: string;
+  entryTime: firestore.Timestamp;
+  created?: firestore.Timestamp;
+};
