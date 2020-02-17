@@ -6,7 +6,7 @@ import {
   User,
   Exercise,
   Workout,
-  JournalEntry
+  EntryFirebase
 } from "./types";
 
 const EMPTY_USER = {
@@ -169,7 +169,9 @@ export async function updateWorkout(id, data) {
 export async function watchEntries(onEntriesChange) {
   REFS.entries.onSnapshot(snapshot => {
     snapshot.query
+      .orderBy("entryTime", "desc")
       .where("userid", "==", REFS && REFS.user ? REFS.user.id : "")
+      .limit(10) // TODO paginate instead of arbitrary limit
       .get()
       .then(result =>
         snapshotToList(result).then(list => {
@@ -179,13 +181,24 @@ export async function watchEntries(onEntriesChange) {
   });
 }
 
+export async function getRecentEntries() {
+  const snapshot = await REFS.entries
+    .orderBy("entryTime", "desc")
+    .limit(10) // TODO paginate instead of arbitrary limit
+    .get();
+  const entries = await snapshotToList(snapshot);
+  return entries;
+}
+
 export async function createJournalEntry(title, content, workout) {
-  const data: JournalEntry = {
+  const data: EntryFirebase = {
     title,
     content,
-    workout,
-    entryTime: currentTime(),
-    userid: REFS.user ? REFS.user.id : ""
+    workout: REFS.workouts.doc(workout.id), // TODO shoule be pointer instead of instance
+    entryTime: currentTime(), // TODO
+    created: currentTime(),
+    userid: REFS.user ? REFS.user.id : "", // TODO reconcile userid and creator
+    creator: REFS.user
   };
   REFS.entries.add({ ...data });
 }

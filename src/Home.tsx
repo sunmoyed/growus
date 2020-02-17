@@ -6,7 +6,7 @@ import Encouragements, {
 } from "./Encouragement";
 import Exercises from "./Exercises";
 import Workouts from "./Workouts";
-import Journal from "./Journal";
+import Journal, { GroupJournal } from "./Journal";
 
 type Props = ProfileProps;
 type State = {
@@ -130,6 +130,7 @@ export default class Home extends React.Component<Props, State> {
           <div>
             <Navigation />
             <RandomEncouragement />
+            <GroupJournal />
           </div>
         );
     }

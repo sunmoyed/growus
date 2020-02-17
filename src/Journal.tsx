@@ -1,10 +1,20 @@
 import React from "react";
-import { Workout } from "./types";
-import { createJournalEntry, watchWorkouts, watchEntries } from "./Database";
+import Calendar from "react-calendar";
+
+import { Workout, Entry } from "./types";
+import {
+  createJournalEntry,
+  watchWorkouts,
+  watchEntries,
+  getRecentEntries
+} from "./Database";
+
+import { ColorSquare } from "./ColorPicker";
+import UserBadge from "./User";
 import { NEW_WORKOUT } from "./Workouts";
 
 export default class Journal extends React.PureComponent {
-  state = { workouts: [], entries: [] };
+  state = { workouts: [], entries: [], hotDates: {} };
 
   constructor(props) {
     super(props);
@@ -16,46 +26,66 @@ export default class Journal extends React.PureComponent {
     this.setState({ workouts });
   };
 
-  handleEntriesChange = (entries: Array<JournalEntry>) => {
-    this.setState({ entries });
+  handleEntriesChange = (entries: Array<Entry>) => {
+    const hotDates = {};
+    entries.forEach((entry: Entry) => {
+      if (entry.entryTime) {
+        hotDates[entry.entryTime.toDate().toDateString()] = entry.workout.color;
+      }
+    });
+    this.setState({ entries, hotDates });
   };
 
   render() {
-    const { entries, workouts } = this.state;
+    const { entries, workouts, hotDates } = this.state;
 
     return (
       <div>
         <h3>Your Journal</h3>
         <JournalEntry workouts={workouts} />
-        {entries.map(entry => (
-          <JournalEntryDisplay {...entry} />
+        <Calendar
+          className="section"
+          tileContent={({ date, view }) => {
+            const workoutColor = hotDates[date.toDateString()];
+            if (view === "month" && workoutColor) {
+              return <ColorSquare color={workoutColor} size={8} />;
+            }
+            return null;
+          }}
+        />
+        {entries.map((entry: Entry, index) => (
+          <JournalEntryDisplay key={entry.id ? entry.id : index} {...entry} />
         ))}
       </div>
     );
   }
 }
+export class GroupJournal extends React.PureComponent {
+  state = { entries: [] };
 
-const WorkoutDisplay = ({ workout }) => {
-  return (
-    <div className="section section-border">
-      <h4>{workout.title}</h4>
-      {workout.description && <p>{workout.description}</p>}
-      {/* the exercises:
-      <ul>
-        {exercises.map((exercise: Exercise, index) => {
-          return (
-            <li key={index}>
-              <div>
-                <b>{exercise.name}</b>
-              </div>
-              <div>{exercise.description}</div>
-            </li>
-          );
-        })}
-      </ul> */}
-    </div>
-  );
-};
+  constructor(props) {
+    super(props);
+    this.getEntries();
+  }
+  getEntries = async () => {
+    const entries = await getRecentEntries();
+
+    this.setState({ entries });
+  };
+
+  render() {
+    const { entries } = this.state;
+
+    return (
+      <div>
+        <h3>All our journals</h3>
+        {entries.map((entry: Entry, index) => (
+          <JournalEntryDisplay key={entry.id ? entry.id : index} {...entry} />
+        ))}
+      </div>
+    );
+  }
+}
 
 class JournalEntry extends React.PureComponent<
   { workouts: Array<Workout> },
@@ -93,7 +123,7 @@ class JournalEntry extends React.PureComponent<
 
   render() {
     const { workouts } = this.props;
-    const { error, workout } = this.state;
+    const { error } = this.state;
 
     return (
       <div>
@@ -118,7 +148,6 @@ class JournalEntry extends React.PureComponent<
               })}
             </select>
           </label>
-          <WorkoutDisplay key={workout.title} workout={workout} />
           <label>
             <input
               type="text"
@@ -126,10 +155,12 @@ class JournalEntry extends React.PureComponent<
               defaultValue={""}
               placeholder="journal entry title"
             />
+          </label>
+          <label>
             <textarea
               name="content"
               defaultValue={""}
-              placeholder="how did you feel?"
+              placeholder="what was it like? how did you feel?"
             />
           </label>
           <button type="submit">write in your journal</button>
@@ -139,17 +170,25 @@ class JournalEntry extends React.PureComponent<
   }
 }
 
-const JournalEntryDisplay = ({ content, title, workout, entryTime }) => {
-  console.log(entryTime);
+const JournalEntryDisplay = ({
+  content,
+  title,
+  workout,
+  entryTime,
+  creator
+}: Entry) => {
   return (
-    <div className="section section-border">
-      <h4>{title}</h4>
-      <p>{entryTime.toDate().toLocaleString()}</p>
-      <p>{content}</p>
-      <p>
-        <b>workout: </b>
-        {workout.title}
-      </p>
-    </div>
+    <section className="card">
+      <UserBadge
+        {...creator}
+        size={34}
+        subtitle={entryTime.toDate().toLocaleString()}
+        noun={workout.title}
+      />
+      <div className="card-content">
+        <h4>{title}</h4>
+        {content && <p>{content}</p>}
+      </div>
+    </section>
   );
 };
