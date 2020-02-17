@@ -1,32 +1,37 @@
+:root {
+  --primary: #a7e4f0;
+  --blockquote: #ece8f2;
+}
+
 .App {
   display: flex;
-  height: 100vh;
   flex-direction: column;
   align-items: center;
+  /* background: rgb(237, 245, 245); */
+  padding: 15px;
 }
 
 header,
 footer,
 .page {
-  flex: 0 0 auto;
   display: flex;
-  /* background: rgb(237, 245, 245); */
+  max-width: 600px;
+  width: 100%;
 }
 
 .page {
-  flex: 1 0 auto;
 }
 
 .container {
-  margin: 10px;
-  margin-top: 0;
-  width: 300px;
-  padding: 10px;
-  flex: 0 0 auto;
+  margin-bottom: 15px;
+  min-width: 300px;
+  flex: 1 0 auto;
+  width: 100%;
 }
 
+section,
 .section {
-  margin-bottom: 16px;
+  margin-bottom: 24px;
 }
 
 .section-border {
@@ -35,7 +40,13 @@ footer,
 }
 
 header .container {
-  border-bottom: 3px solid #a7e4f0;
+  border-bottom: 3px solid var(--primary);
+}
+
+h1 {
+  font-size: 1.3em;
+  margin-block-start: 0;
+  margin-block-end: 0;
 }
 
 header h2 {
@@ -44,6 +55,16 @@ header h2 {
 
 .error {
   color: red;
+}
+
+small {
+  color: #958ba8;
+  font-size: 0.8em;
+}
+
+.description {
+  display: block;
+  color: #958ba8;
 }
 
 .encouragement {
@@ -59,8 +80,7 @@ header h2 {
 }
 
 .workout {
-  border-left: 3px solid #dcdae3;
-  padding-inline-start: 10px;
+  margin-bottom: 40px;
 }
 
 .list-row {
@@ -68,6 +88,14 @@ header h2 {
   flex-wrap: wrap;
   grid-column-gap: 12px;
   margin-bottom: 10px;
+}
+
+.row-with-icon {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 8px;
 }
 
 label {
@@ -82,6 +110,11 @@ textarea {
 
 h3 {
   font-size: 1.1em;
+  background: #ecf8fb;
+}
+
+h4 {
+  margin-block-start: unset;
 }
 
 .workout ul {
@@ -97,10 +130,13 @@ h3 {
   fill: currentColor;
 }
 
+.workout-badge,
 .user-badge {
   display: inline-grid;
   grid-template-columns: min-content auto;
-  align-items: baseline;
+  align-items: flex-start;
+  gap: 0.3em;
+  width: 100%;
 }
 
 .user-icon {
@@ -113,6 +149,20 @@ h3 {
 p {
   margin: 0;
   margin-bottom: 1em;
+}
+
+ul.description-list {
+  list-style-type: none;
+  margin-block-start: 0;
+  margin-block-end: 0;
+  padding-inline-start: 10px;
+}
+.description-list > li {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 /*---RESET---*/
@@ -157,6 +207,21 @@ p {
   color: #000;
 }
 
+.text-button .icon-button {
+  text-decoration: none;
+  font-size: 24px;
+}
+
+.card {
+  margin-bottom: 30px;
+}
+.card-content {
+  padding-inline-start: 27px;
+  margin-inline-start: 15px;
+  border-left: 3px solid var(--blockquote);
+  padding-top: 16px;
+}
+
 /* Firebase */
 #firebaseui_container {
   margin: 0 -24px;
@@ -166,4 +231,21 @@ p {
 }
 .firebaseui-list-item {
   text-align: left;
+}
+
+/* react-calendar */
+.react-calendar {
+  border: none;
+}
+.react-calendar__navigation {
+  min-width: 20px;
+}
+.react-calendar__navigation__label {
+  min-width: 50px;
+}
+.react-calendar__month-view__days {
+  align-items: baseline;
+}
+.react-calendar__month-view__days__day--weekend {
+  color: initial;
 }
