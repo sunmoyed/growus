@@ -203,6 +203,12 @@ ul.description-list {
   margin-left: -10px;
   padding: 0 10px;
 }
+.text-button-stealth {
+  text-decoration: none;
+}
+.text-button-selected {
+  text-decoration: underline 3px var(--primary);
+}
 .text-button:hover {
   color: #000;
 }

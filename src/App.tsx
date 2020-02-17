@@ -10,6 +10,7 @@ import "react-calendar/dist/Calendar.css";
 import "./App.css";
 import Home from "./Home";
 import Login from "./Login";
+import history, { Link } from "./History";
 
 import { User as FirebaseUser } from "firebase/app";
 
@@ -27,7 +28,7 @@ const Loading = () => {
   return null;
 };
 
-const Page = ({ user, ...props }) => {
+const CheckAuth = ({ user, ...props }) => {
   // auth state is loading, don't show anything
   if (user === undefined) {
     return <Loading />;
@@ -40,9 +41,12 @@ const Page = ({ user, ...props }) => {
 };
 
 class App extends React.Component {
-  unregisterAuthObserver: undefined | (() => void);
+  unregisterAuthObserver = () => {};
+  unlisten = () => {};
 
   state = {
+    pathname: history.location.pathname,
+    page: getPage(history.location.pathname),
     user: undefined,
     userData: null
   };
@@ -53,11 +57,20 @@ class App extends React.Component {
         this.handleUserUpdate(user);
       }
     );
+    this.unlisten = history.listen(this.handleHistoryChange);
   }
 
   componentWillUnmount() {
-    !!this.unregisterAuthObserver && this.unregisterAuthObserver();
+    this.unregisterAuthObserver();
+    this.unlisten();
   }
+
+  handleHistoryChange = (location, action) => {
+    this.setState({
+      pathname: location.pathname,
+      page: getPage(location.pathname || "/")
+    });
+  };
 
   handleUserUpdate = (user: FirebaseUser | null) => {
     this.setState({ user });
@@ -70,26 +83,27 @@ class App extends React.Component {
   };
 
   render() {
-    const { user, userData } = this.state;
+    const { page, user, userData } = this.state;
 
     return (
       <div className="App">
         <header>
           <div className="container row-with-icon">
-            <a href="/">
+            <Link href="/" hideTextDecoration>
               <h1>
                 let's grow us <img src={logo} className="App-logo" alt="logo" />
               </h1>
-            </a>
-            <NavBar user={userData} />
+            </Link>
+            <TitleIcon user={userData} />
           </div>
         </header>
         <div className="page">
           <div className="container">
-            <Page
+            <CheckAuth
               user={user}
               onUserUpdate={this.handleUserUpdate}
               userData={userData}
+              page={page}
             />
           </div>
         </div>
@@ -100,9 +114,17 @@ class App extends React.Component {
 
 export default App;
 
-const NavBar = ({ user }) => {
+const TitleIcon = ({ user }) => {
   if (!user || !user.displayName) {
     return null;
   }
-  return <UserIcon {...user} size={30} />;
+  return (
+    <Link href={"profile"}>
+      <UserIcon {...user} size={30} />
+    </Link>
+  );
 };
+
+function getPage(pathname): (pathname: string) => string {
+  return pathname.split("/")[1];
+}
