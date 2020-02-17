@@ -8,6 +8,7 @@ import {
   updateWorkout
 } from "./Database";
 import ColorPicker, { ColorSquare } from "./ColorPicker";
+import { ExerciseList } from "./Exercises";
 
 const WORKOUT_COLORS = [
   "ffdbb9",
@@ -62,18 +63,22 @@ export default class Workouts extends React.PureComponent {
     const { exerciseBank, workouts } = this.state;
 
     return (
-      <div>
-        <h3>New workout</h3>
-        <EditWorkout workout={NEW_WORKOUT} exerciseBank={exerciseBank} />
-        <h3>Your workouts :)</h3>
-        {workouts.map((workout: Workout) => (
-          <EditWorkout
-            key={workout.title}
-            workout={workout}
-            exerciseBank={exerciseBank}
-          />
-        ))}
-      </div>
+      <React.Fragment>
+        <section>
+          <h3>New workout</h3>
+          <EditWorkout workout={NEW_WORKOUT} exerciseBank={exerciseBank} />
+        </section>
+        <section>
+          <h3>Your workouts :)</h3>
+          {workouts.map((workout: Workout) => (
+            <EditWorkout
+              key={workout.title}
+              workout={workout}
+              exerciseBank={exerciseBank}
+            />
+          ))}
+        </section>
+      </React.Fragment>
     );
   }
 }
@@ -157,81 +162,64 @@ class EditWorkout extends React.PureComponent<
     );
 
     return (
-      <div className="section workout">
+      <section className="workout">
         {error && <p className="error">{error}</p>}
-        <form onSubmit={this.handleCreateWorkout}>
-          <label>
-            <input
-              type="text"
-              name="title"
-              defaultValue={workout && workout.title}
-              placeholder="workout name"
+        <div className="workout-badge">
+          <ColorPicker
+            colors={WORKOUT_COLORS}
+            color={color}
+            onColorClick={this.handleColorPick}
+            lineHeight={30}
+            size={20}
+          />
+          <form onSubmit={this.handleCreateWorkout}>
+            <label>
+              <input
+                type="text"
+                name="title"
+                defaultValue={workout && workout.title}
+                placeholder="workout name"
+              />
+            </label>
+            <label>
+              <input
+                type="text"
+                name="description"
+                defaultValue={workout && workout.description}
+                placeholder="workout description"
+              />
+            </label>
+            <ExerciseList
+              exercises={workoutExercises}
+              onDelete={this.removeExercise}
             />
-          </label>
-          <label>
-            <input
-              type="text"
-              name="description"
-              defaultValue={workout && workout.description}
-              placeholder="workout description"
-            />
-          </label>
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <span>Color marker: </span>
-            <ColorPicker
-              colors={WORKOUT_COLORS}
-              color={color}
-              onColorClick={this.handleColorPick}
-            />
-          </div>
-          <h4>exercises:</h4>
-          <ul>
-            {workoutExercises.map((exercise, index) => {
-              return (
-                <li key={index}>
-                  <div>
-                    <b>{exercise.name}</b>
-                  </div>
-                  <div>{exercise.description}</div>
-                  <button
-                    className="text-button"
-                    onClick={() => this.removeExercise(exercise.id)}
-                  >
-                    x
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-          <label>
-            Add exercises:
-            <select
-              name="exercise"
-              id="exercise-select"
-              onChange={this.addExercise}
-            >
-              <option value=""></option>
-              {availableExercises.map((exercise: Exercise, index) => {
-                return (
-                  <option key={index} value={exercise.id}>
-                    {exercise.name}
-                    {exercise.description && " - "}
-                    {exercise.description}
-                  </option>
-                );
-              })}
-            </select>
-          </label>
-          <div>
-            <button type="submit">
-              {workout.id ? "update" : "create"} workout
-            </button>
-            {workout.id && (
-              <button onClick={this.handleDeleteWorkout}>delete workout</button>
-            )}
-          </div>
-        </form>
-      </div>
+            <label>
+              <select
+                name="exercise"
+                id="exercise-select"
+                onChange={this.addExercise}
+              >
+                <option value="">add exercises</option>
+                {availableExercises.map((exercise: Exercise, index) => {
+                  return (
+                    <option key={index} value={exercise.id}>
+                      {exercise.name}
+                      {exercise.description && " - "}
+                      {exercise.description}
+                    </option>
+                  );
+                })}
+              </select>
+            </label>
+            <div>
+              <button type="submit">{workout.id ? "update" : "create"}</button>
+              {workout.id && (
+                <button onClick={this.handleDeleteWorkout}>delete</button>
+              )}
+            </div>
+          </form>
+        </div>
+      </section>
     );
   }
 }

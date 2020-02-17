@@ -38,7 +38,7 @@ const UserBadge = ({
 );
 export default UserBadge;
 
-const UserIcon = ({ displayName, imgSrc, size, username }) => (
+export const UserIcon = ({ displayName, imgSrc, size, username }) => (
   <img
     className="user-icon"
     src={imgSrc || ""}
