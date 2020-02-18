@@ -4,6 +4,8 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
 
+// These values are unique, but not secrets.
+// It's ok for them to be in the repo.
 const firebaseConfig = {
   apiKey: "AIzaSyBxeS2P_8hW_RpNGhcAzq5kHhi3B6dVwM0",
   authDomain: "grow-us.firebaseapp.com",
@@ -30,7 +32,13 @@ const uiConfigBase = {
     }
   },
   signInFlow: "popup",
-  signInOptions: [firebase.auth.GithubAuthProvider.PROVIDER_ID]
+  // Providers are configured on the firebase console:
+  // https://console.firebase.google.com/u/0/project/grow-us/authentication/providers
+  signInOptions: [
+    // github application oauth settings:
+    // https://github.com/organizations/sunmoyed/settings/applications/1136033
+    firebase.auth.GithubAuthProvider.PROVIDER_ID
+  ]
 };
 
 export const FirebaseLogin = ({ onSuccess }) => {
