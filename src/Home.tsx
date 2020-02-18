@@ -19,7 +19,7 @@ const Home = props => (
 
 export default Home;
 
-const Page = ({ page, ...props }) => {
+const Page = ({ page, ...props }: any) => {
   switch (page) {
     case "journal":
       return (
