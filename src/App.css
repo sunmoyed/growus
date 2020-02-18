@@ -1,6 +1,13 @@
 :root {
   --primary: #a7e4f0;
   --blockquote: #ece8f2;
+  --title-background: #ecf8fb;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --title-background: #1d7186;
+  }
 }
 
 .App {
@@ -110,7 +117,7 @@ textarea {
 
 h3 {
   font-size: 1.1em;
-  background: #ecf8fb;
+  background: var(--title-background);
 }
 
 h4 {
@@ -198,7 +205,7 @@ ul.description-list {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
   cursor: pointer;
-  color: #555;
+  color: var(--text-main);
   text-decoration: underline #aaa5a5;
   margin-left: -10px;
   padding: 0 10px;
