@@ -1,4 +1,6 @@
 import React from "react";
+import { User as FirebaseUser } from "firebase/app";
+
 import Profile from "./Profile";
 import Encouragements, {
   RandomEncouragement,
@@ -8,18 +10,26 @@ import Exercises from "./Exercises";
 import Workouts from "./Workouts";
 import Journal, { GroupJournal } from "./Journal";
 import { Link } from "./History";
+import { User } from "./types";
 
-const Home = props => (
+export type PageProps = {
+  user: FirebaseUser;
+  userData: User;
+  page: string;
+  subpaths: Array<string>;
+};
+
+const Home = (props: PageProps) => (
   <div>
     <Navigation page={props.page} />
     <RandomEncouragement />
-    <Page {...props} />
+    <Page {...props} subpaths={getSubpaths(window.location.pathname)} />
   </div>
 );
 
 export default Home;
 
-const Page = ({ page, ...props }: any) => {
+const Page = ({ page, ...props }: PageProps) => {
   switch (page) {
     case "journal":
       return (
@@ -30,7 +40,9 @@ const Page = ({ page, ...props }: any) => {
     case "profile":
       return (
         <div>
-          <Profile {...props} />
+          {props.userData && (
+            <Profile {...props} profilePage={getProfilePage(props.subpaths)} />
+          )}
         </div>
       );
     case "encouragements":
@@ -53,12 +65,13 @@ const Page = ({ page, ...props }: any) => {
         </div>
       );
     case "":
-    default:
       return (
         <div>
           <GroupJournal />
         </div>
       );
+    default:
+      return <div>nothing to see here :^)</div>;
   }
 };
 
@@ -78,3 +91,11 @@ const Navigation = ({ page }) => (
     </Link>
   </div>
 );
+
+function getSubpaths(pathname: string): Array<string> {
+  return pathname.split("/").slice(2);
+}
+
+function getProfilePage(subpaths: Array<string>): string {
+  return subpaths[0] || "";
+}

@@ -18,26 +18,18 @@ import { auth } from "./Auth";
 import { getUser } from "./Database";
 import { UserIcon } from "./User";
 
-const EMPTY_USER = {
-  username: "",
-  displayName: "",
-  imgSrc: ""
-};
-
 const Loading = () => {
   return null;
 };
 
-const CheckAuth = ({ user, ...props }) => {
+const CheckAuth = ({ user, ...props }: any) => {
   // auth state is loading, don't show anything
   if (user === undefined) {
     return <Loading />;
   } else if (!user) {
     return <Login {...props} />;
   }
-  return (
-    <Home user={user} userData={props.userData || EMPTY_USER} {...props} />
-  );
+  return <Home user={user} userData={props.userData} {...props} />;
 };
 
 class App extends React.Component {
@@ -115,7 +107,7 @@ class App extends React.Component {
 export default App;
 
 const TitleIcon = ({ user }) => {
-  if (!user || !user.displayName) {
+  if (!user || !user.username) {
     return null;
   }
   return (

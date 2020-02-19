@@ -218,6 +218,10 @@ ul.description-list {
 .text-button-stealth {
   text-decoration: none;
 }
+.text-button-inline {
+  padding: 0;
+  margin: 0;
+}
 .text-button-selected {
   text-decoration: underline 3px var(--primary);
 }

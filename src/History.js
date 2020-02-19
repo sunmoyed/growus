@@ -13,12 +13,14 @@ export default history;
 export const Link = ({
   children,
   href,
+  inline = false,
   hideTextDecoration = false,
   selected = false,
   ...props
 }) => (
   <button
     className={`text-button 
+      ${inline ? "text-button-inline" : ""} 
       ${hideTextDecoration ? "text-button-stealth" : ""} 
       ${selected ? "text-button-selected" : ""} `}
     onClick={() => history.push(href)}

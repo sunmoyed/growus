@@ -43,7 +43,7 @@ export const UserIcon = ({ displayName, imgSrc, size, username }) => (
     className="user-icon"
     src={imgSrc || ""}
     alt={`user icon ${username}`}
-    title={`that's you, ${displayName}`}
+    title={`that's you, ${displayName || username}`}
     style={{ height: size, width: size }}
   />
 );

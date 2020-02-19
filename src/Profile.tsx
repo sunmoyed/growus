@@ -2,32 +2,74 @@ import React from "react";
 import { auth, reauthenticate } from "./Auth";
 import { User } from "./types";
 import { User as FirebaseUser } from "firebase/app";
-import { updateUser } from "./Database";
+import { updateUser, getUserByUsername } from "./Database";
+import { Link } from "./History";
+import { UserIcon } from "./User";
 
 const ERR_RELOGIN = "auth/requires-recent-login";
 
-export type ProfileProps = {
-  user: User;
+type ProfileProps = {
   onUserUpdate?: (user: FirebaseUser | null) => void;
+  profilePage: string;
   userData: User;
 };
 
-type State = {
+type StateProps = {
   error: string;
+  input: string;
+  initialLoad: boolean;
+  profileData?: User;
+  userData: User;
 };
 
-const EMPTY_USER = {
-  username: "",
-  displayName: "",
-  imgSrc: "",
-  updated: null
-};
+export default class Profile extends React.PureComponent<
+  ProfileProps,
+  StateProps
+> {
+  constructor(props) {
+    super(props);
+    const { profilePage } = props;
+    let initialLoad = false;
 
-export default class Profile extends React.PureComponent<ProfileProps, State> {
-  state = {
-    error: "",
-    input: "",
-    userData: {}
+    if (profilePage) {
+      this.getUserInfo(profilePage);
+      initialLoad = true;
+    }
+
+    this.state = {
+      error: "",
+      input: "",
+      initialLoad,
+      profileData: undefined,
+      userData: this.props.userData
+    };
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { profilePage } = this.props;
+    const currentProfile = prevState.profileData
+      ? prevState.profileData.username
+      : null;
+
+    if (
+      profilePage !== prevProps.profilePage &&
+      !!profilePage &&
+      currentProfile !== profilePage
+    ) {
+      this.getUserInfo(profilePage);
+    }
+  }
+
+  getUserInfo = async username => {
+    try {
+      const profileData = await getUserByUsername(username);
+
+      this.setState({ profileData, error: "", initialLoad: false });
+    } catch {
+      this.setState({
+        error: "there's no person behind this username."
+      });
+    }
   };
 
   updateName = async e => {
@@ -56,7 +98,9 @@ export default class Profile extends React.PureComponent<ProfileProps, State> {
     const form = new FormData(e.target);
     const userData = {
       username: form.get("username"),
-      displayName: form.get("displayName")
+      displayName: form.get("displayName"),
+      goals: form.get("goals"),
+      berry: form.get("berry")
     };
 
     if (appUser) {
@@ -98,10 +142,22 @@ export default class Profile extends React.PureComponent<ProfileProps, State> {
   };
 
   render() {
-    const { error } = this.state;
-    const { userData = EMPTY_USER } = this.props;
+    if (this.state.initialLoad) {
+      return null;
+    }
+    const { error, profileData, userData } = this.state;
+    const { profilePage } = this.props;
     const updated =
       userData && userData.updated ? userData.updated.toDate() : null;
+
+    if (!!profilePage && profileData !== undefined && userData !== null) {
+      return (
+        <UserFacts
+          isYou={userData.username === profileData.username}
+          user={profileData}
+        />
+      );
+    }
 
     return (
       <div className="section">
@@ -124,7 +180,45 @@ export default class Profile extends React.PureComponent<ProfileProps, State> {
               defaultValue={userData ? userData.username : ""}
             />
           </label>
-          <button type="submit">that's me</button>
+          <label>
+            about{" "}
+            <span role="img" aria-label="sparkles">
+              ✨
+            </span>
+            <textarea
+              name="about"
+              defaultValue={userData ? userData.about : ""}
+              placeholder="what do you want to do in life? what makes you happy?"
+            />
+          </label>
+          <label>
+            goals{" "}
+            <span role="img" aria-label="sprout">
+              🌱
+            </span>
+            <textarea
+              name="goals"
+              defaultValue={userData ? userData.goals : ""}
+              placeholder="what are you learning and working on in the next couple months?"
+            />
+          </label>
+          <label>
+            favourite berry{" "}
+            <span role="img" aria-label="berry">
+              🍌
+            </span>
+            <input
+              type="text"
+              name="berry"
+              defaultValue={userData ? userData.berry : ""}
+              placeholder="jalapeño"
+            />
+          </label>
+          <button type="submit">that's me</button> (
+          <Link href={`/profile/${userData.username}`} inline>
+            see yourself
+          </Link>
+          )
         </form>
         {updated && (
           <p>
@@ -145,3 +239,63 @@ export default class Profile extends React.PureComponent<ProfileProps, State> {
     );
   }
 }
+
+const UserFacts = ({ isYou, user }: { isYou: boolean; user: User }) => {
+  const { displayName, imgSrc, username, about, goals, berry } = user;
+  return (
+    <div>
+      <section
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          gap: "1em",
+          alignItems: "center"
+        }}
+      >
+        <UserIcon
+          displayName={displayName}
+          imgSrc={imgSrc}
+          size={70}
+          username={username}
+        />
+        <div>
+          <h2 style={{ marginBottom: "0.1em" }}>{displayName}</h2>
+          <p className="description">
+            @{username}
+            {isYou && (
+              <React.Fragment>
+                {" "}
+                (
+                <Link href="/profile" inline>
+                  edit
+                </Link>
+                )
+              </React.Fragment>
+            )}
+          </p>
+        </div>
+      </section>
+      <section>
+        <p>{about}</p>
+      </section>
+      <section>
+        <h4>
+          goals{" "}
+          <span role="img" aria-label="sprout">
+            🌱
+          </span>
+        </h4>
+        <p>{goals}</p>
+      </section>
+      <section>
+        <h4>
+          favourite berry{" "}
+          <span role="img" aria-label="berry">
+            🍌
+          </span>
+        </h4>
+        <p>{berry ? berry : "unknown"}</p>
+      </section>
+    </div>
+  );
+};
