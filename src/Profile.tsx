@@ -276,7 +276,7 @@ const UserFacts = ({ isYou, user }: { isYou: boolean; user: User }) => {
         </div>
       </section>
       <section>
-        <p>{about}</p>
+        <p>{about ? about : "a mysterious bean"}</p>
       </section>
       <section>
         <h4>
@@ -285,7 +285,7 @@ const UserFacts = ({ isYou, user }: { isYou: boolean; user: User }) => {
             🌱
           </span>
         </h4>
-        <p>{goals}</p>
+        <p>{goals ? goals : "we don't know"}</p>
       </section>
       <section>
         <h4>
