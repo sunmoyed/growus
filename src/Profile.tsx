@@ -246,8 +246,8 @@ const UserFacts = ({ isYou, user }: { isYou: boolean; user: User }) => {
     <div>
       <section
         style={{
-          display: "flex",
-          flexDirection: "row",
+          display: "grid",
+          gridTemplateColumns: "min-content auto",
           gap: "1em",
           alignItems: "center"
         }}
