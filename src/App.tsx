@@ -111,7 +111,7 @@ const TitleIcon = ({ user }) => {
     return null;
   }
   return (
-    <Link href={"profile"}>
+    <Link href={"/profile"}>
       <UserIcon {...user} size={30} />
     </Link>
   );
