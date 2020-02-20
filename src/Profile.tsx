@@ -3,7 +3,7 @@ import { auth, reauthenticate } from "./Auth";
 import { User } from "./types";
 import { User as FirebaseUser } from "firebase/app";
 import { updateUser, getUserByUsername } from "./Database";
-import { Link } from "./History";
+import history, { Link } from "./History";
 import { UserIcon } from "./User";
 
 const ERR_RELOGIN = "auth/requires-recent-login";
@@ -63,8 +63,13 @@ export default class Profile extends React.PureComponent<
   getUserInfo = async username => {
     try {
       const profileData = await getUserByUsername(username);
+      let error = "";
+      if (!profileData) {
+        error = `can't find ${username || "them"}.`;
+        history.push("/profile");
+      }
 
-      this.setState({ profileData, error: "", initialLoad: false });
+      this.setState({ profileData, error, initialLoad: false });
     } catch {
       this.setState({
         error: "there's no person behind this username."
@@ -104,8 +109,14 @@ export default class Profile extends React.PureComponent<
     };
 
     if (appUser) {
-      updateUser(appUser.uid, userData);
-      onUserUpdate && onUserUpdate(appUser);
+      try {
+        updateUser(appUser.uid, userData);
+        onUserUpdate && onUserUpdate(appUser);
+
+        this.setState({ error: "" });
+      } catch {
+        this.setState({ error: "couldn't update ):" });
+      }
     }
   };
 
@@ -124,6 +135,7 @@ export default class Profile extends React.PureComponent<
       try {
         await appUser.delete();
         onUserUpdate && onUserUpdate(appUser);
+        this.setState({ error: "" });
       } catch (error) {
         if (error.code === ERR_RELOGIN) {
           // Prompt the user to re-provide their sign-in credentials
