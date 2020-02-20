@@ -7,6 +7,7 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --title-background: #1d7186;
+    --blockquote: #3d3f50;
   }
 }
 
@@ -222,7 +223,7 @@ ul.description-list {
   text-decoration: underline 3px var(--primary);
 }
 .text-button:hover {
-  color: #000;
+  color: var(--text-bright);
 }
 
 .text-button .icon-button {
