@@ -9,9 +9,8 @@ import {
   EntryFirebase
 } from "./types";
 
-const EMPTY_USER = {
+const EMPTY_USER: User = {
   username: "",
-  displayName: "",
   imgSrc: ""
 };
 
@@ -62,10 +61,19 @@ export async function updateUser(uid, data) {
 
 export async function getUser(user: FirebaseUser) {
   if (!user) {
-    return EMPTY_USER;
+    return null;
   }
   REFS.user = await REFS.users.doc(user.uid);
   return getDoc(REFS.user);
+}
+
+export async function getUserByUsername(
+  username: string
+): Promise<User | undefined> {
+  const snapshot = await REFS.users.where("username", "==", username).get();
+
+  const result: any = await snapshotToList(snapshot);
+  return result[0];
 }
 
 function getProfileInfoFromProvider(user: FirebaseUser | null): User {

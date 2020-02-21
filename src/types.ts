@@ -1,9 +1,12 @@
 import { firestore } from "firebase/app"; // types
 
 export type User = {
-  displayName: string;
   imgSrc: string;
   username: string;
+  displayName?: string;
+  about?: string;
+  goals?: string;
+  berry?: string;
   created?: firestore.Timestamp;
   updated?: firestore.Timestamp;
 };
