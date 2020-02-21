@@ -2,12 +2,14 @@
   --primary: #a7e4f0;
   --blockquote: #ece8f2;
   --title-background: #ecf8fb;
+  --icon: #91d2d9;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --title-background: #1d7186;
     --blockquote: #3d3f50;
+    --icon: #c3d7db;
   }
 }
 
@@ -33,6 +35,10 @@ footer,
 }
 
 .page {
+}
+
+svg.icon {
+  fill: var(--icon);
 }
 
 .container {

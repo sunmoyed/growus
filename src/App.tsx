@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "./logo.svg";
+import Logo from "./Logo";
 
 // base css library imported first
 // https://github.com/kognise/water.css
@@ -88,10 +88,10 @@ class App extends React.Component {
     return (
       <div className="App">
         <header>
-          <div className="container row-with-icon">
+          <div className="container row-with-icon" style={{height: 30}}>
             <Link href="/" hideTextDecoration>
               <h1>
-                let's grow us <img src={logo} className="App-logo" alt="logo" />
+                let's grow us <Logo />
               </h1>
             </Link>
             <TitleIcon user={userData} />
