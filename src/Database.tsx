@@ -179,7 +179,7 @@ export async function watchEntries(onEntriesChange) {
     snapshot.query
       .orderBy("entryTime", "desc")
       .where("userid", "==", REFS && REFS.user ? REFS.user.id : "")
-      .limit(10) // TODO paginate instead of arbitrary limit
+      .limit(5)
       .get()
       .then(result =>
         snapshotToList(result).then(list => {
@@ -189,11 +189,24 @@ export async function watchEntries(onEntriesChange) {
   });
 }
 
-export async function getRecentEntries() {
-  const snapshot = await REFS.entries
-    .orderBy("entryTime", "desc")
-    .limit(10) // TODO paginate instead of arbitrary limit
-    .get();
+export async function getRecentEntries(startAfter: Date, userId?: string) {
+  let snapshot: firestore.QuerySnapshot;
+  if (!!userId) {
+    // gets recent entries from only one person
+    snapshot = await REFS.entries
+      .orderBy("entryTime", "desc")
+      .where("userid", "==", userId)
+      .startAfter(startAfter)
+      .limit(5)
+      .get();
+  } else {
+    // get recent entries by anyone
+    snapshot = await REFS.entries
+      .orderBy("entryTime", "desc")
+      .startAfter(startAfter)
+      .limit(5)
+      .get();
+  }
   const entries = await snapshotToList(snapshot);
   return entries;
 }

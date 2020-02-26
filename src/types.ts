@@ -1,4 +1,6 @@
-import { firestore } from "firebase/app"; // types
+import { firestore, User as FUser } from "firebase/app"; // types
+
+export type FirestoreUser = FUser;
 
 export type User = {
   imgSrc: string;

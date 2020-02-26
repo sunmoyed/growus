@@ -1,7 +1,7 @@
 import React from "react";
 import Calendar from "react-calendar";
 
-import { Workout, Entry } from "./types";
+import { Workout, Entry, FirestoreUser } from "./types";
 import {
   createJournalEntry,
   watchWorkouts,
@@ -13,7 +13,9 @@ import { ColorSquare } from "./ColorPicker";
 import UserBadge from "./User";
 import { NEW_WORKOUT } from "./Workouts";
 
-export default class Journal extends React.PureComponent {
+export default class Journal extends React.PureComponent<{
+  user: FirestoreUser;
+}> {
   state = { workouts: [], entries: [], hotDates: {} };
 
   constructor(props) {
@@ -36,6 +38,27 @@ export default class Journal extends React.PureComponent {
     this.setState({ entries, hotDates });
   };
 
+  getEntries = async (lastTimestamp = new Date()) => {
+    const nextEntries = await getRecentEntries(
+      lastTimestamp,
+      this.props.user ? this.props.user.uid : undefined
+    );
+
+    if (nextEntries) {
+      const { hotDates } = this.state;
+      nextEntries.forEach((entry: Entry) => {
+        if (entry.entryTime) {
+          hotDates[entry.entryTime.toDate().toDateString()] =
+            entry.workout.color;
+        }
+      });
+
+      this.setState(({ entries }: { entries: Array<Entry> }) => {
+        return { entries: entries.concat(nextEntries), hotDates };
+      });
+    }
+  };
+
   render() {
     const { entries, workouts, hotDates } = this.state;
 
@@ -56,9 +79,10 @@ export default class Journal extends React.PureComponent {
         {entries.map((entry: Entry, index) => (
           <JournalEntryDisplay key={entry.id ? entry.id : index} {...entry} />
         ))}
-        <p className="descrption">
-          There might be more, but pagination isn't supported yet :^)
-        </p>
+
+        <button onClick={() => this.getEntries(getLastTimestamp(entries))}>
+          more
+        </button>
       </div>
     );
   }
@@ -70,10 +94,15 @@ export class GroupJournal extends React.PureComponent {
     super(props);
     this.getEntries();
   }
-  getEntries = async () => {
-    const entries = await getRecentEntries();
 
-    this.setState({ entries });
+  getEntries = async (lastTimestamp = new Date()) => {
+    const nextEntries = await getRecentEntries(lastTimestamp);
+
+    if (nextEntries) {
+      this.setState(({ entries }: { entries: Array<Entry> }) => {
+        return { entries: entries.concat(nextEntries) };
+      });
+    }
   };
 
   render() {
@@ -85,12 +114,19 @@ export class GroupJournal extends React.PureComponent {
         {entries.map((entry: Entry, index) => (
           <JournalEntryDisplay key={entry.id ? entry.id : index} {...entry} />
         ))}
-        <p className="descrption">
-          There might be more, but pagination isn't supported yet :^)
-        </p>
+        <button onClick={() => this.getEntries(getLastTimestamp(entries))}>
+          more
+        </button>
       </div>
     );
   }
+}
+
+function getLastTimestamp(arr) {
+  const lastItem: any = arr.slice(-1).pop();
+  const lastTime = lastItem ? lastItem.entryTime : null;
+
+  return lastTime;
 }
 
 class JournalEntry extends React.PureComponent<
