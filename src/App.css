@@ -265,6 +265,7 @@ ul.description-list {
 /* react-calendar */
 .react-calendar {
   border: none;
+  background: transparent;
 }
 .react-calendar__navigation {
   min-width: 20px;
@@ -277,4 +278,16 @@ ul.description-list {
 }
 .react-calendar__month-view__days__day--weekend {
   color: initial;
+}
+.react-calendar__tile--active {
+  background: #91d2d9;
+}
+
+@media (prefers-color-scheme: dark) {
+  .react-calendar__tile--active {
+    background: #2b7185;
+  }
+  .react-calendar__month-view__days__day--weekend {
+    color: #ece8f2;
+  }
 }
