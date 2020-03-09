@@ -170,13 +170,18 @@ class JournalEntry extends React.PureComponent<
 
   handleCalendarChange = (date: Date | Date[]) => {
     if (date as Date) {
-      this.setState({ date: date as Date });
+      this.setState({ date: date as Date, showCalendar: false });
     }
+  };
+
+  handleDateClick = (event: React.MouseEvent) => {
+    event.preventDefault();
+    this.setState(prevState => ({ showCalendar: !prevState.showCalendar }));
   };
 
   render() {
     const { workouts } = this.props;
-    const { error, showCalendar } = this.state;
+    const { error, showCalendar, date } = this.state;
 
     return (
       <div>
@@ -201,13 +206,12 @@ class JournalEntry extends React.PureComponent<
               })}
             </select>
           </label>
-          <label>
-            <input
-              value={this.state.date.toISOString()}
-              onClick={() => this.setState({ showCalendar: true })}
-            ></input>
-          </label>
-          {showCalendar && <Calendar onChange={this.handleCalendarChange} />}
+          <button onClick={this.handleDateClick}>
+            {date.toLocaleDateString()}
+          </button>
+          {showCalendar && (
+            <Calendar onChange={this.handleCalendarChange} value={date} />
+          )}
           <label>
             <input
               type="text"
