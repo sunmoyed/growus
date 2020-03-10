@@ -131,9 +131,14 @@ function getLastTimestamp(arr) {
 
 class JournalEntry extends React.PureComponent<
   { workouts: Array<Workout> },
-  { error: string; workout: Workout }
+  { error: string; workout: Workout; date: Date; showCalendar: boolean }
 > {
-  state = { error: "", workout: NEW_WORKOUT };
+  state = {
+    error: "",
+    workout: NEW_WORKOUT,
+    date: new Date(),
+    showCalendar: false
+  };
 
   selectWorkout = event => {
     const index = event.target.value;
@@ -148,7 +153,7 @@ class JournalEntry extends React.PureComponent<
     const form = new FormData(event.target);
     const title = form.get("title");
     const content = form.get("content");
-    const { workout } = this.state;
+    const { workout, date } = this.state;
 
     if (!workout) {
       this.setState({ error: "which workout did you do today?" });
@@ -158,14 +163,25 @@ class JournalEntry extends React.PureComponent<
       return;
     }
 
-    createJournalEntry(title, content, workout);
+    createJournalEntry(title, content, workout, date);
     this.setState({ error: "", workout: NEW_WORKOUT });
     event.target.reset();
   };
 
+  handleCalendarChange = (date: Date | Date[]) => {
+    if (date as Date) {
+      this.setState({ date: date as Date, showCalendar: false });
+    }
+  };
+
+  handleDateClick = (event: React.MouseEvent) => {
+    event.preventDefault();
+    this.setState(prevState => ({ showCalendar: !prevState.showCalendar }));
+  };
+
   render() {
     const { workouts } = this.props;
-    const { error } = this.state;
+    const { error, showCalendar, date } = this.state;
 
     return (
       <div>
@@ -190,6 +206,12 @@ class JournalEntry extends React.PureComponent<
               })}
             </select>
           </label>
+          <button onClick={this.handleDateClick}>
+            {date.toLocaleDateString()}
+          </button>
+          {showCalendar && (
+            <Calendar onChange={this.handleCalendarChange} value={date} />
+          )}
           <label>
             <input
               type="text"

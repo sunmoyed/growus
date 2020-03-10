@@ -211,12 +211,12 @@ export async function getRecentEntries(startAfter: Date, userId?: string) {
   return entries;
 }
 
-export async function createJournalEntry(title, content, workout) {
+export async function createJournalEntry(title, content, workout, date) {
   const data: EntryFirebase = {
     title,
     content,
     workout: REFS.workouts.doc(workout.id), // TODO shoule be pointer instead of instance
-    entryTime: currentTime(), // TODO
+    entryTime: date,
     created: currentTime(),
     userid: REFS.user ? REFS.user.id : "", // TODO reconcile userid and creator
     creator: REFS.user
