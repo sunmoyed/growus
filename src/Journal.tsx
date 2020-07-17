@@ -30,17 +30,7 @@ export default class Journal extends React.PureComponent<{
 
   handleEntriesChange = (entries: Array<Entry>) => {
     const hotDates = {};
-    entries.forEach((entry: Entry) => {
-      if (entry.entryTime) {
-        const date = entry.entryTime.toDate().toDateString();
-        if (date in hotDates) {
-          hotDates[date].push(entry.workout.color);
-        } else {
-          let colorArray = [entry.workout.color];
-          hotDates[date] = colorArray;
-        }
-      }
-    });
+    this.getColorsForDates(entries, hotDates);
     this.setState({ entries, hotDates });
   };
 
@@ -52,22 +42,26 @@ export default class Journal extends React.PureComponent<{
 
     if (nextEntries) {
       const { hotDates } = this.state;
-      nextEntries.forEach((entry: Entry) => {
-        if (entry.entryTime) {
-          const date = entry.entryTime.toDate().toDateString();
-          if (date in hotDates) {
-            hotDates[date].push(entry.workout.color);
-          } else {
-            let colorArray = [entry.workout.color];
-            hotDates[date] = colorArray;
-          }
-        }
-      });
+      this.getColorsForDates(nextEntries, hotDates);
 
       this.setState(({ entries }: { entries: Array<Entry> }) => {
         return { entries: entries.concat(nextEntries), hotDates };
       });
     }
+  };
+
+  getColorsForDates = (entries, hotDates) => {
+    entries.forEach((entry: Entry) => {
+      if (entry.entryTime) {
+        const date = entry.entryTime.toDate().toDateString();
+        if (date in hotDates) {
+          hotDates[date].push(entry.workout.color);
+        } else {
+          let colorArray = [entry.workout.color];
+          hotDates[date] = colorArray;
+        }
+      }
+    });
   };
 
   render() {
