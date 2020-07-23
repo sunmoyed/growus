@@ -29,8 +29,7 @@ export default class Journal extends React.PureComponent<{
   };
 
   handleEntriesChange = (entries: Array<Entry>) => {
-    const hotDates = {};
-    this.getColorsForDates(entries, hotDates);
+    const hotDates = this.getColorsForDates(entries);
     this.setState({ entries, hotDates });
   };
 
@@ -42,15 +41,19 @@ export default class Journal extends React.PureComponent<{
 
     if (nextEntries) {
       const { hotDates } = this.state;
-      this.getColorsForDates(nextEntries, hotDates);
+      const newDates = this.getColorsForDates(nextEntries);
 
       this.setState(({ entries }: { entries: Array<Entry> }) => {
-        return { entries: entries.concat(nextEntries), hotDates };
+        return {
+          entries: entries.concat(nextEntries),
+          hotDates: Object.assign({}, hotDates, newDates),
+        };
       });
     }
   };
 
-  getColorsForDates = (entries, hotDates) => {
+  getColorsForDates = (entries) => {
+    const hotDates = {};
     entries.forEach((entry: Entry) => {
       if (entry.entryTime) {
         const date = entry.entryTime.toDate().toDateString();
@@ -62,6 +65,7 @@ export default class Journal extends React.PureComponent<{
         }
       }
     });
+    return hotDates;
   };
 
   render() {
