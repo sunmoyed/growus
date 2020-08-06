@@ -6,7 +6,7 @@ import {
   createJournalEntry,
   watchWorkouts,
   watchEntries,
-  getRecentEntries
+  getRecentEntries,
 } from "./Database";
 
 import { ColorSquare } from "./ColorPicker";
@@ -29,12 +29,7 @@ export default class Journal extends React.PureComponent<{
   };
 
   handleEntriesChange = (entries: Array<Entry>) => {
-    const hotDates = {};
-    entries.forEach((entry: Entry) => {
-      if (entry.entryTime) {
-        hotDates[entry.entryTime.toDate().toDateString()] = entry.workout.color;
-      }
-    });
+    const hotDates = this.getColorsForDates(entries);
     this.setState({ entries, hotDates });
   };
 
@@ -46,17 +41,31 @@ export default class Journal extends React.PureComponent<{
 
     if (nextEntries) {
       const { hotDates } = this.state;
-      nextEntries.forEach((entry: Entry) => {
-        if (entry.entryTime) {
-          hotDates[entry.entryTime.toDate().toDateString()] =
-            entry.workout.color;
-        }
-      });
+      const newDates = this.getColorsForDates(nextEntries);
 
       this.setState(({ entries }: { entries: Array<Entry> }) => {
-        return { entries: entries.concat(nextEntries), hotDates };
+        return {
+          entries: entries.concat(nextEntries),
+          hotDates: Object.assign({}, hotDates, newDates),
+        };
       });
     }
+  };
+
+  getColorsForDates = (entries) => {
+    const hotDates = {};
+    entries.forEach((entry: Entry) => {
+      if (entry.entryTime) {
+        const date = entry.entryTime.toDate().toDateString();
+        if (date in hotDates) {
+          hotDates[date].push(entry.workout.color);
+        } else {
+          let colorArray = [entry.workout.color];
+          hotDates[date] = colorArray;
+        }
+      }
+    });
+    return hotDates;
   };
 
   render() {
@@ -69,9 +78,11 @@ export default class Journal extends React.PureComponent<{
         <Calendar
           className="section"
           tileContent={({ date, view }) => {
-            const workoutColor = hotDates[date.toDateString()];
-            if (view === "month" && workoutColor) {
-              return <ColorSquare color={workoutColor} size={8} />;
+            const workoutColors = hotDates[date.toDateString()];
+            if (view === "month" && workoutColors) {
+              return workoutColors.map((color) => (
+                <ColorSquare color={color} size={8} />
+              ));
             }
             return null;
           }}
@@ -137,10 +148,10 @@ class JournalEntry extends React.PureComponent<
     error: "",
     workout: NEW_WORKOUT,
     date: new Date(),
-    showCalendar: false
+    showCalendar: false,
   };
 
-  selectWorkout = event => {
+  selectWorkout = (event) => {
     const index = event.target.value;
     if (index) {
       const { workouts } = this.props;
@@ -148,7 +159,7 @@ class JournalEntry extends React.PureComponent<
     }
   };
 
-  handleCreateEntry = async event => {
+  handleCreateEntry = async (event) => {
     event.preventDefault();
     const form = new FormData(event.target);
     const title = form.get("title");
@@ -176,7 +187,7 @@ class JournalEntry extends React.PureComponent<
 
   handleDateClick = (event: React.MouseEvent) => {
     event.preventDefault();
-    this.setState(prevState => ({ showCalendar: !prevState.showCalendar }));
+    this.setState((prevState) => ({ showCalendar: !prevState.showCalendar }));
   };
 
   render() {
@@ -239,7 +250,7 @@ const JournalEntryDisplay = ({
   title,
   workout,
   entryTime,
-  creator
+  creator,
 }: Entry) => {
   return (
     <section className="card">
