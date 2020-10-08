@@ -61,6 +61,6 @@ export type Entry = {
   userid: string;
   creator?;
   id?: string;
-  entryTime: firestore.Timestamp;
-  created?: firestore.Timestamp;
+  entryTime: Date;
+  created?: Date;
 };

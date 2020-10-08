@@ -8,7 +8,7 @@ import Encouragements, {
 } from "./Encouragement";
 import Exercises from "./Exercises";
 import Workouts from "./Workouts";
-import Journal, { GroupJournal } from "./Journal";
+import Journal, { Entries } from "./Journal";
 import { Link } from "./History";
 import { User } from "./types";
 
@@ -65,9 +65,10 @@ const Page = ({ page, ...props }: PageProps) => {
         </div>
       );
     case "":
+      // TODO the group journal should show the next n entries, rather than by time window.
       return (
         <div>
-          <GroupJournal />
+          <Entries />
         </div>
       );
     default:

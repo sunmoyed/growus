@@ -158,11 +158,15 @@ h4 {
   width: 100%;
 }
 
-.user-icon {
+.user-icon,
+.user-icon-empty {
   width: 24px;
   height: 24px;
   border-radius: 50%;
   vertical-align: middle;
+}
+.user-icon-empty {
+  border: 1px solid rgb(226, 238, 237);
 }
 
 p {
