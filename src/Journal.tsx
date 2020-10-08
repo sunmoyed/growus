@@ -1,75 +1,238 @@
 import React from "react";
 import Calendar from "react-calendar";
+import moment from "moment";
 
-import { Workout, Entry, FirestoreUser } from "./types";
+import { Workout, Entry as EntryType, FirestoreUser, User } from "./types";
 import {
   createJournalEntry,
   watchWorkouts,
   watchEntries,
-  getRecentEntries,
+  getUserById,
+  getWorkoutById,
+  filterEntrySnapshot,
+  filterEntrySnapshotByUser,
 } from "./Database";
+import { Entry } from "./Classes";
 
 import { ColorSquare } from "./ColorPicker";
 import UserBadge from "./User";
 import { NEW_WORKOUT } from "./Workouts";
+import { firestore } from "firebase";
+import boney from "./images/boney_dig.gif";
 
-export default class Journal extends React.PureComponent<{
-  user: FirestoreUser;
-}> {
-  state = { workouts: [], entries: [], hotDates: {} };
+const DISPLAY_INTERVAL_DAYS = 7;
 
+const CalendarTile = ({ date, view, hotDates, workouts }) => {
+  if (Object.keys(hotDates).length === 0) {
+    return null;
+  }
+
+  const workoutsForDay = hotDates[date.toDateString()];
+  if (view === "month" && workoutsForDay) {
+    return workoutsForDay.map((workoutRef, i) => {
+      if (workoutRef) {
+        const workout = findWorkoutById(workoutRef.id, workouts);
+        if (workout) {
+          return <ColorSquare key={i} color={workout.color} size={8} />;
+        }
+      }
+      return null;
+    });
+  }
+  return null;
+};
+
+function getHotDates(entriesSnapshot: firestore.QuerySnapshot) {
+  const hotDates = {};
+  entriesSnapshot.forEach((doc) => {
+    const entry = doc.data();
+    if (entry.entryTime) {
+      const date = entry.entryTime.toDateString();
+      if (date in hotDates) {
+        hotDates[date].push(entry.workoutRef);
+      } else {
+        let workouts = [entry.workoutRef];
+        hotDates[date] = workouts;
+      }
+    }
+  });
+  return hotDates;
+}
+
+function findWorkoutById(id, workouts: Array<Workout>) {
+  return workouts.find((workout) => workout.id === id);
+}
+
+type JournalState = {
+  cancelEntriesWatcher: () => void;
+  workouts: Workout[];
+  entries: any[];
+  hotDates: any;
+  isLoading: boolean;
+  entriesSnapshot?: firestore.QuerySnapshot;
+  endTime: moment.Moment;
+  startTime: moment.Moment;
+};
+export default class Journal extends React.Component<
+  {
+    user: FirestoreUser;
+    userData: User;
+  },
+  JournalState
+> {
   constructor(props) {
     super(props);
     watchWorkouts(this.handleWorkoutsChange);
-    watchEntries(this.handleEntriesChange);
+    let cancelEntriesWatcher;
+    watchEntries(this.handleEntriesChange).then((fn) => {
+      cancelEntriesWatcher = fn;
+      this.setState({ cancelEntriesWatcher });
+    });
+
+    this.state = {
+      cancelEntriesWatcher,
+      workouts: [],
+      entries: [],
+      hotDates: {},
+      isLoading: true,
+      entriesSnapshot: undefined,
+      endTime: moment().subtract(DISPLAY_INTERVAL_DAYS, "days"),
+      startTime: moment(), // today
+    };
+  }
+
+  componentWillUnmount() {
+    this.state.cancelEntriesWatcher();
   }
 
   handleWorkoutsChange = (workouts: Array<Workout>) => {
     this.setState({ workouts });
   };
 
-  handleEntriesChange = (entries: Array<Entry>) => {
-    const hotDates = this.getColorsForDates(entries);
-    this.setState({ entries, hotDates });
-  };
+  handleEntriesChange = async (entriesSnapshot: firestore.QuerySnapshot) => {
+    const { endTime, startTime } = this.state;
+    const { user } = this.props;
+    this.setState({ isLoading: true });
 
-  getEntries = async (lastTimestamp = new Date()) => {
-    const nextEntries = await getRecentEntries(
-      lastTimestamp,
-      this.props.user ? this.props.user.uid : undefined
+    const snapshot = await filterEntrySnapshotByUser(
+      entriesSnapshot,
+      startTime,
+      endTime,
+      user.uid
+    );
+    this.setState({ entriesSnapshot: snapshot });
+
+    const entries: firestore.DocumentData[] = [];
+    snapshot.forEach((doc) => entries.push(doc.data()));
+    this.setState({
+      entries,
+      isLoading: false,
+      endTime: moment(endTime).subtract(DISPLAY_INTERVAL_DAYS, "day"),
+    });
+
+    const firstOfMonth = moment(startTime).startOf("month");
+    const lastOfMonth = moment(startTime).endOf("month");
+    const monthSnapshot = await filterEntrySnapshotByUser(
+      entriesSnapshot,
+      lastOfMonth,
+      firstOfMonth,
+      user.uid
     );
 
-    if (nextEntries) {
-      const { hotDates } = this.state;
-      const newDates = this.getColorsForDates(nextEntries);
+    const hotDates = getHotDates(monthSnapshot);
+    this.setState({ hotDates });
+  };
 
-      this.setState(({ entries }: { entries: Array<Entry> }) => {
-        return {
-          entries: entries.concat(nextEntries),
-          hotDates: Object.assign({}, hotDates, newDates),
-        };
-      });
+  handleNewDateClick = async (date, event) => {
+    const { entriesSnapshot } = this.state;
+    const { user } = this.props;
+    const startTime = moment(date);
+    const endTime = moment(startTime).subtract(DISPLAY_INTERVAL_DAYS, "days");
+
+    if (entriesSnapshot) {
+      this.setState({ isLoading: true });
+      const snapshot = await filterEntrySnapshotByUser(
+        entriesSnapshot,
+        startTime,
+        endTime,
+        user.uid
+      );
+
+      const entries: firestore.DocumentData[] = [];
+      snapshot.forEach((doc) => entries.push(doc.data()));
+      this.setState({ entries, isLoading: false, startTime, endTime });
     }
   };
 
-  getColorsForDates = (entries) => {
-    const hotDates = {};
-    entries.forEach((entry: Entry) => {
-      if (entry.entryTime) {
-        const date = entry.entryTime.toDate().toDateString();
-        if (date in hotDates) {
-          hotDates[date].push(entry.workout.color);
-        } else {
-          let colorArray = [entry.workout.color];
-          hotDates[date] = colorArray;
-        }
-      }
-    });
-    return hotDates;
+  handleActiveStartDateChange = ({ activeStartDate, view }) => {
+    console.log(
+      "handle active start date change",
+      activeStartDate,
+      view,
+      view === "month"
+    );
+    if (view !== "month") {
+      return;
+    }
+
+    this.fetchHotDates(
+      moment(activeStartDate).endOf("month"),
+      moment(activeStartDate)
+    );
+  };
+
+  fetchHotDates = async (start: moment.Moment, end: moment.Moment) => {
+    debugger;
+    const { user } = this.props;
+    const { entriesSnapshot } = this.state;
+
+    if (entriesSnapshot) {
+      const monthSnapshot = await filterEntrySnapshotByUser(
+        entriesSnapshot,
+        start,
+        end,
+        user.uid
+      );
+
+      const hotDates = getHotDates(monthSnapshot);
+      this.setState({ hotDates });
+    }
+  };
+
+  showMoreEntries = async (currentEndTime: moment.Moment) => {
+    const { entriesSnapshot, startTime } = this.state;
+    const { user } = this.props;
+    const endTime: moment.Moment = moment(currentEndTime).subtract(
+      DISPLAY_INTERVAL_DAYS,
+      "days"
+    );
+
+    if (entriesSnapshot) {
+      this.setState({ isLoading: true });
+      const snapshot = await filterEntrySnapshotByUser(
+        entriesSnapshot,
+        startTime,
+        endTime,
+        user.uid
+      );
+
+      const entries: firestore.DocumentData[] = [];
+      snapshot.forEach((doc) => entries.push(doc.data()));
+
+      this.setState({ entries, isLoading: false, endTime });
+    }
   };
 
   render() {
-    const { entries, workouts, hotDates } = this.state;
+    const {
+      entries,
+      workouts,
+      isLoading,
+      endTime,
+      startTime,
+      hotDates,
+    } = this.state;
+    const { userData } = this.props;
 
     return (
       <div>
@@ -77,72 +240,202 @@ export default class Journal extends React.PureComponent<{
         <JournalEntry workouts={workouts} />
         <Calendar
           className="section"
-          tileContent={({ date, view }) => {
-            const workoutColors = hotDates[date.toDateString()];
-            if (view === "month" && workoutColors) {
-              return workoutColors.map((color) => (
-                <ColorSquare color={color} size={8} />
-              ));
-            }
-            return null;
-          }}
+          onChange={this.handleNewDateClick}
+          onActiveStartDateChange={this.handleActiveStartDateChange}
+          tileContent={({ date, view }) => (
+            <CalendarTile
+              date={date}
+              view={view}
+              hotDates={hotDates}
+              workouts={workouts}
+            />
+          )}
         />
+        <h4>{startTime.format("LL")}</h4>
         {entries.map((entry: Entry, index) => (
-          <JournalEntryDisplay key={entry.id ? entry.id : index} {...entry} />
+          <JournalEntryDisplay
+            key={entry.id ? entry.id : index}
+            {...entry}
+            creator={userData}
+            workout={findWorkoutById(entry.workoutRef.id, workouts)}
+          />
         ))}
-
-        <button onClick={() => this.getEntries(getLastTimestamp(entries))}>
-          more
-        </button>
+        {isLoading ? (
+          <img src={boney} alt="journal is loading" />
+        ) : (
+          <React.Fragment>
+            {!entries.length && <p>No entries</p>}
+            <button onClick={() => this.showMoreEntries(endTime)}>more</button>
+          </React.Fragment>
+        )}
       </div>
     );
   }
 }
-export class GroupJournal extends React.PureComponent {
-  state = { entries: [] };
 
+type EntriesState = {
+  cancelEntriesWatcher: () => void;
+  entries: any[];
+  isLoading: boolean;
+  entriesSnapshot?: firestore.QuerySnapshot;
+  endTime: moment.Moment;
+  startTime: moment.Moment;
+  users: {}; // keyed by user.id
+  workouts: {}; // keyed by workout.id
+};
+// TODO refactor this with Journal
+export class Entries extends React.Component<
+  {
+    cancelEntriesWatcher?: Promise<() => void>;
+    initialEntriesSnapshot?: firestore.QuerySnapshot;
+  },
+  EntriesState
+> {
   constructor(props) {
     super(props);
-    this.getEntries();
+    let isLoading = props.initialEntriesSnapshot ? false : true;
+
+    let cancelEntriesWatcher;
+    watchEntries(this.handleEntriesChange).then((fn) => {
+      cancelEntriesWatcher = fn;
+      this.setState({ cancelEntriesWatcher });
+    });
+
+    this.state = {
+      cancelEntriesWatcher: props.cancelEntriesWatcher || cancelEntriesWatcher,
+      entries: props.initialEntriesSnapshot || [],
+      users: {},
+      workouts: {},
+      entriesSnapshot: undefined,
+      endTime: moment().subtract(DISPLAY_INTERVAL_DAYS, "days"),
+      startTime: moment(), // now
+      isLoading,
+    };
   }
 
-  getEntries = async (lastTimestamp = new Date()) => {
-    const nextEntries = await getRecentEntries(lastTimestamp);
+  componentWillUnmount() {
+    this.state.cancelEntriesWatcher();
+  }
 
-    if (nextEntries) {
-      this.setState(({ entries }: { entries: Array<Entry> }) => {
-        return { entries: entries.concat(nextEntries) };
-      });
+  addUserToLookup = async (id) => {
+    const user = await getUserById(id);
+    this.setState({ users: { ...this.state.users, [id]: user } });
+  };
+
+  addWorkoutToLookup = async (id) => {
+    const workout = await getWorkoutById(id);
+    this.setState({ workouts: { ...this.state.workouts, [id]: workout } });
+  };
+
+  handleEntriesChange = async (entriesSnapshot: firestore.QuerySnapshot) => {
+    const { endTime, startTime, users, workouts } = this.state;
+    this.setState({ isLoading: true });
+
+    const snapshot = await filterEntrySnapshot(
+      entriesSnapshot,
+      startTime,
+      endTime
+    );
+    this.setState({
+      entriesSnapshot: snapshot,
+      endTime: moment(endTime).subtract(DISPLAY_INTERVAL_DAYS, "day"),
+    });
+
+    this.loadEntries(snapshot, users, workouts);
+  };
+
+  loadEntries = (entriesSnapshot, users, workouts) => {
+    const entries: firestore.DocumentData[] = [];
+    entriesSnapshot.forEach((doc) => {
+      const entry = doc.data();
+      const userId = entry.creatorRef.id;
+      const workoutId = entry.workoutRef.id;
+      const user = users[userId];
+      const workout = workouts[workoutId];
+      // I can't believe I have to do this manually
+      if (!user && userId) {
+        this.addUserToLookup(userId);
+      }
+      if (!workout && workoutId) {
+        this.addWorkoutToLookup(workoutId);
+      }
+      entries.push(entry);
+    });
+    this.setState({
+      entries,
+      isLoading: false,
+    });
+  };
+
+  showMoreEntries = async (currentEndTime: moment.Moment) => {
+    const { entriesSnapshot, startTime, users, workouts } = this.state;
+    const endTime: moment.Moment = moment(currentEndTime).subtract(
+      DISPLAY_INTERVAL_DAYS,
+      "days"
+    );
+
+    if (entriesSnapshot) {
+      this.setState({ isLoading: true, endTime });
+      const snapshot = await filterEntrySnapshot(
+        entriesSnapshot,
+        startTime,
+        endTime
+      );
+
+      this.loadEntries(snapshot, users, workouts);
     }
   };
 
   render() {
-    const { entries } = this.state;
+    const { entries, isLoading, endTime, users, workouts } = this.state;
 
     return (
       <div>
-        <h3>All our journals</h3>
-        {entries.map((entry: Entry, index) => (
-          <JournalEntryDisplay key={entry.id ? entry.id : index} {...entry} />
-        ))}
-        <button onClick={() => this.getEntries(getLastTimestamp(entries))}>
-          more
-        </button>
+        <EntriesDisplay entries={entries} users={users} workouts={workouts} />
+        {isLoading ? (
+          <img src={boney} alt="journal is loading" />
+        ) : (
+          <React.Fragment>
+            {!entries.length && <p>No entries</p>}
+            <button onClick={() => this.showMoreEntries(endTime)}>more</button>
+          </React.Fragment>
+        )}
       </div>
     );
   }
 }
 
-function getLastTimestamp(arr) {
-  const lastItem: any = arr.slice(-1).pop();
-  const lastTime = lastItem ? lastItem.entryTime : null;
+type EntriesDisplayProps = {
+  entries: any[];
+  users: {}; // keyed by user.id
+  workouts: {}; // keyed by workout.id
+};
+const EntriesDisplay = ({ entries, users, workouts }: EntriesDisplayProps) => (
+  <React.Fragment>
+    {entries.map((entry: Entry, index) => {
+      return (
+        <JournalEntryDisplay
+          key={entry.id ? entry.id : index}
+          {...entry}
+          creator={users[entry.creatorRef.id]}
+          workout={workouts[entry.workoutRef.id]}
+        />
+      );
+    })}
+  </React.Fragment>
+);
 
-  return lastTime;
-}
+type JournalEntryProps = { workouts: Array<Workout>; entry?: EntryType };
+type JournalEntryState = {
+  error: string;
+  workout: Workout;
+  date: Date;
+  showCalendar: boolean;
+};
 
 class JournalEntry extends React.PureComponent<
-  { workouts: Array<Workout> },
-  { error: string; workout: Workout; date: Date; showCalendar: boolean }
+  JournalEntryProps,
+  JournalEntryState
 > {
   state = {
     error: "",
@@ -251,14 +544,20 @@ const JournalEntryDisplay = ({
   workout,
   entryTime,
   creator,
-}: Entry) => {
+}: {
+  content?: string;
+  title: string;
+  workout?: Workout;
+  entryTime: Date;
+  creator?: User;
+}) => {
   return (
     <section className="card">
       <UserBadge
         {...creator}
         size={34}
-        subtitle={entryTime.toDate().toLocaleString()}
-        noun={workout.title}
+        subtitle={entryTime.toLocaleString()}
+        noun={workout ? workout.title : undefined}
       />
       <div className="card-content">
         <h4>{title}</h4>

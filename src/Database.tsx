@@ -9,6 +9,8 @@ import {
   EntryFirebase
 } from "./types";
 
+import { entryConverter } from "./Classes";
+
 const EMPTY_USER: User = {
   username: "",
   imgSrc: ""
@@ -74,6 +76,16 @@ export async function getUserByUsername(
 
   const result: any = await snapshotToList(snapshot);
   return result[0];
+}
+
+export async function getUserById(id: string) {
+  const userRef = await REFS.users.doc(id);
+  return getDoc(userRef);
+}
+
+export async function getWorkoutById(id: string) {
+  const workoutRef = await REFS.workouts.doc(id);
+  return getDoc(workoutRef);
 }
 
 function getProfileInfoFromProvider(user: FirebaseUser | null): User {
@@ -174,41 +186,46 @@ export async function updateWorkout(id, data) {
   REFS.workouts.doc(id).update(workoutData);
 }
 
-export async function watchEntries(onEntriesChange) {
-  REFS.entries.onSnapshot(snapshot => {
-    snapshot.query
+// returns a watcher cancelling function
+export async function watchEntries(onEntriesChange, uid?: string | undefined) {
+  if (!uid) {
+    return await REFS.entries
       .orderBy("entryTime", "desc")
-      .where("userid", "==", REFS && REFS.user ? REFS.user.id : "")
-      .limit(5)
-      .get()
-      .then(result =>
-        snapshotToList(result).then(list => {
-          onEntriesChange(list);
-        })
-      );
-  });
+      .onSnapshot((snapshot) => onEntriesChange(snapshot));
+  } else {
+    return await REFS.entries
+      .orderBy("entryTime", "desc")
+      .where("userid", "==", uid)
+      .onSnapshot((snapshot) => onEntriesChange(snapshot));
+  }
 }
 
-export async function getRecentEntries(startAfter: Date, userId?: string) {
-  let snapshot: firestore.QuerySnapshot;
-  if (!!userId) {
-    // gets recent entries from only one person
-    snapshot = await REFS.entries
-      .orderBy("entryTime", "desc")
-      .where("userid", "==", userId)
-      .startAfter(startAfter)
-      .limit(5)
-      .get();
-  } else {
-    // get recent entries by anyone
-    snapshot = await REFS.entries
-      .orderBy("entryTime", "desc")
-      .startAfter(startAfter)
-      .limit(5)
+// Use this to get ALL entries within a timeframe
+export async function filterEntrySnapshot(
+  snapshot: firestore.QuerySnapshot,
+  startTime: moment.Moment,
+  endTime: moment.Moment
+): Promise<firestore.QuerySnapshot> {
+  return await snapshot.query
+    .startAt(startTime.endOf("day").toDate())
+    .endAt(endTime.startOf("day").toDate())
+    .withConverter(entryConverter)
       .get();
   }
-  const entries = await snapshotToList(snapshot);
-  return entries;
+
+// Use this to get entries within a timeframe by userId
+export async function filterEntrySnapshotByUser(
+  snapshot: firestore.QuerySnapshot,
+  startTime: moment.Moment, // more recent time
+  endTime: moment.Moment, // less recent time
+  id
+) {
+  return await snapshot.query
+    .where("userid", "==", id)
+    .startAt(startTime.endOf("day").toDate())
+    .endAt(endTime.startOf("day").toDate())
+    .withConverter(entryConverter)
+    .get();
 }
 
 export async function createJournalEntry(title, content, workout, date) {
