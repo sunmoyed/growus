@@ -77,4 +77,5 @@ export const entryConverter = {
   },
 };
 
-export default {};
+const Classes = {}
+export default Classes;
