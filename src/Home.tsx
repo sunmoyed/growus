@@ -9,6 +9,7 @@ import Encouragements, {
 import Exercises from "./Exercises";
 import Workouts from "./Workouts";
 import Journal, { Entries } from "./Journal";
+import YearlyReview from "./YearlyReview";
 import { Link } from "./History";
 import { User } from "./types";
 
@@ -21,6 +22,7 @@ export type PageProps = {
 
 const Home = (props: PageProps) => (
   <div>
+    {props.page !== "yearlyreview" && <YearInReviewBanner />}
     <Navigation page={props.page} />
     <RandomEncouragement />
     <Page {...props} subpaths={getSubpaths(window.location.pathname)} />
@@ -64,6 +66,12 @@ const Page = ({ page, ...props }: PageProps) => {
           <Workouts />
         </div>
       );
+    case "yearlyreview":
+      return (
+        <div>
+          <YearlyReview {...props} />
+        </div>
+      );
     case "":
       // TODO the group journal should show the next n entries, rather than by time window.
       return (
@@ -75,6 +83,12 @@ const Page = ({ page, ...props }: PageProps) => {
       return <div>nothing to see here :^)</div>;
   }
 };
+
+const YearInReviewBanner = () => (
+  <div className="banner">
+    Check out your <Link href="/yearlyreview">2020 year of growing</Link> 🌱
+  </div>
+);
 
 const Navigation = ({ page }) => (
   <div className="list-row">

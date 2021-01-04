@@ -295,3 +295,10 @@ ul.description-list {
     color: #ece8f2;
   }
 }
+
+.banner {
+  background: linear-gradient(27deg, rgba(255, 234, 165, 1) 0%, rgba(170, 255, 235, 1) 100%);
+  padding: 5px 10px;
+  margin: 0 -15px;
+  margin-bottom: 10px;
+}

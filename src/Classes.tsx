@@ -58,7 +58,7 @@ export class Entry {
 // https://firebase.google.com/docs/reference/js/firebase.firestore.FirestoreDataConverter
 export const entryConverter = {
   toFirestore(entry: Entry): firebase.firestore.DocumentData {
-    return {};
+    return {}; // TODO
   },
   fromFirestore(
     snapshot: firebase.firestore.QueryDocumentSnapshot,
@@ -77,5 +77,43 @@ export const entryConverter = {
   },
 };
 
-const Classes = {}
+export class YearlyReview {
+  readonly updated: Date;
+  creator?: User;
+
+  constructor(
+    updated: firestore.Timestamp,
+    readonly workoutTotals: {},
+    readonly creatorRef: firestore.DocumentReference,
+    readonly year: Number,
+    readonly id: string
+  ) {
+    this.updated = updated.toDate();
+  }
+
+  toString(): string {
+    return `year ${this.year} in review`;
+  }
+}
+
+export const yearlyReviewConverter = {
+  toFirestore(yearlyReview: YearlyReview): firebase.firestore.DocumentData {
+    return {}; // TODO
+  },
+  fromFirestore(
+    snapshot: firebase.firestore.QueryDocumentSnapshot,
+    options: firebase.firestore.SnapshotOptions
+  ): YearlyReview {
+    const data = snapshot.data(options)!;
+    return new YearlyReview(
+      data.updated,
+      data.workoutTotals,
+      data.creator,
+      data.year,
+      snapshot.id
+    );
+  },
+};
+
+const Classes = {};
 export default Classes;
