@@ -6,10 +6,12 @@ import {
   User,
   Exercise,
   Workout,
-  EntryFirebase
+  EntryFirebase,
+  YearlyReviewFirebase,
 } from "./types";
+import moment from "moment";
 
-import { entryConverter } from "./Classes";
+import { entryConverter, yearlyReviewConverter } from "./Classes";
 
 const EMPTY_USER: User = {
   username: "",
@@ -19,10 +21,11 @@ const EMPTY_USER: User = {
 interface refsType {
   users: firestore.CollectionReference;
   encouragements: firestore.CollectionReference;
-  user: firestore.DocumentReference | null;
+  user: firestore.DocumentReference | undefined;
   exercises: firestore.CollectionReference;
   workouts: firestore.CollectionReference;
   entries: firestore.CollectionReference;
+  yearlyReviews: firestore.CollectionReference;
 }
 
 export const db = firebaseApp.firestore();
@@ -33,8 +36,9 @@ let REFS: refsType = {
   exercises: db.collection("exercises"),
   workouts: db.collection("workouts"),
   entries: db.collection("entries"),
+  yearlyReviews: db.collection("yearlyReviews"),
 
-  user: null
+  user: undefined,
 };
 
 export async function createUser(user: FirebaseUser) {
@@ -81,6 +85,10 @@ export async function getUserByUsername(
 export async function getUserById(id: string) {
   const userRef = await REFS.users.doc(id);
   return getDoc(userRef);
+}
+
+function getUserRefById(uid: string) {
+  return REFS.users.doc(uid);
 }
 
 export async function getWorkoutById(id: string) {
@@ -154,7 +162,7 @@ export async function createExercise(name, description) {
 }
 
 export async function watchWorkouts(onWorkoutsChange) {
-  REFS.workouts.onSnapshot(snapshot => {
+  return REFS.workouts.onSnapshot((snapshot) => {
     snapshot.query
       .where("userid", "==", REFS && REFS.user ? REFS.user.id : "")
       .get()
@@ -200,6 +208,57 @@ export async function watchEntries(onEntriesChange, uid?: string | undefined) {
   }
 }
 
+// returns a watcher cancelling function
+export async function watchYearlyReview(
+  onYearlyReviewChange,
+  uid,
+  year: number
+) {
+  const userRef = REFS.user || getUserRefById(uid);
+
+  return REFS.yearlyReviews
+    .where("creator", "==", userRef)
+    .where("year", "==", year)
+    .onSnapshot(async (snapshot) =>
+      onYearlyReviewChange(
+        await snapshot.query.withConverter(yearlyReviewConverter).get()
+      )
+    );
+}
+
+// creates a yearly review for 2020.
+export async function createYearlyReview(uid, year) {
+  const userRef = REFS.user || getUserRefById(uid);
+
+  const entriesSnapshot: firestore.QuerySnapshot = await REFS.entries
+    .orderBy("entryTime", "desc")
+    .where("userid", "==", uid)
+    .startAt(moment([year]).endOf("year").toDate())
+    .endAt(moment([year]).startOf("year").toDate())
+    .withConverter(entryConverter)
+    .get();
+
+  const entries: firestore.DocumentData[] = [];
+  entriesSnapshot.forEach((doc) => entries.push(doc.data()));
+
+  const workoutTotals = {};
+  entries.forEach((entry) => {
+    const workoutId = entry.workoutRef.id;
+    const count = workoutTotals[workoutId] || 0;
+    workoutTotals[workoutId] = count + 1;
+  });
+
+  const data: YearlyReviewFirebase = {
+    year,
+    updated: currentTime(),
+    workoutTotals,
+    userid: uid,
+    creator: userRef,
+  };
+
+  REFS.yearlyReviews.add({ ...data });
+}
+
 // Use this to get ALL entries within a timeframe
 export async function filterEntrySnapshot(
   snapshot: firestore.QuerySnapshot,
@@ -210,8 +269,8 @@ export async function filterEntrySnapshot(
     .startAt(startTime.endOf("day").toDate())
     .endAt(endTime.startOf("day").toDate())
     .withConverter(entryConverter)
-      .get();
-  }
+    .get();
+}
 
 // Use this to get entries within a timeframe by userId
 export async function filterEntrySnapshotByUser(

@@ -64,3 +64,23 @@ export type Entry = {
   entryTime: Date;
   created?: Date;
 };
+
+export type YearlyReviewFirebase = {
+  updated: firestore.Timestamp;
+  workoutTotals: {
+    // [WorkoutID]: Number; // TODO
+  };
+  userid?: String;
+  creator?: firestore.DocumentReference;
+  year: Number;
+};
+
+export type YearlyReview = {
+  updated: Date;
+  workoutTotals: {
+    // [WorkoutID]: Number; // TODO
+  };
+  userid?: String; // for filtering on the firestore console, since you can't filter by reference there
+  creator?;
+  year: Number;
+};
