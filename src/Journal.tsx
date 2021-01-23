@@ -22,15 +22,11 @@ import boney from "./images/boney_dig.gif";
 const DISPLAY_INTERVAL_DAYS = 7;
 
 const CalendarTile = ({ date, view, hotDates, workouts }) => {
-  if (Object.keys(hotDates).length === 0) {
-    return null;
-  }
-
-  const workoutsForDay = hotDates[date.toDateString()];
-  if (view === "month" && workoutsForDay) {
+  const workoutsForDay = hotDates[date.toDateString()] || [];
+  if (view === "month") {
     return (
       <div className="calendar-activity-icon">
-        {workoutsForDay.map((workoutRef, i) => {
+        {workoutsForDay.map((workoutRef) => {
           if (workoutRef) {
             const workout = findWorkoutById(workoutRef.id, workouts);
             if (workout) {

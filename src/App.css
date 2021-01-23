@@ -5,7 +5,10 @@
   --icon: #91d2d9;
 
   /* calendar */
-  --calendar-hover: #fffedb;
+  --calendar-hover: #ffe93738;
+  --calendar-border: #e6e5f7;
+  --calendar-grid-horizontal: #daf7f5;
+  --calendar-grid-vertical: #ecedf4;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -15,7 +18,10 @@
     --icon: #c3d7db;
 
     /* calendar */
-    --calendar-hover: #40485a;
+    --calendar-hover: #77ffff4f;
+    --calendar-border: #1f3952;
+    --calendar-grid-horizontal: #2c3c3a;
+    --calendar-grid-vertical: #2b343e;
   }
 }
 
@@ -279,15 +285,40 @@ button.primary {
 
 /* react-calendar */
 .react-calendar {
-  border: none;
   background: transparent;
   width: 100%;
+  border: 2px solid var(--calendar-border);
+  border-radius: 5px;
 }
 .react-calendar__navigation {
   min-width: 20px;
+  border-bottom: 1px solid var(--primary);
+  margin-bottom: 0;
+  align-items: stretch;
+}
+.react-calendar__navigation button {
+  min-width: 44px;
+  background: none;
+  flex: 0 1 auto;
+  padding: 10px 14px;
 }
 .react-calendar__navigation__label {
   min-width: 50px;
+}
+.react-calendar__viewContainer {
+  /* grid pattern 
+  * https://www.magicpattern.design/tools/css-backgrounds
+  */
+  background-image: linear-gradient(
+      var(--calendar-grid-horizontal) 1.2000000000000002px,
+      transparent 1.2000000000000002px
+    ),
+    linear-gradient(
+      to right,
+      var(--calendar-grid-vertical) 1.2000000000000002px,
+      var(--background-body) 1.2000000000000002px
+    );
+  background-size: 24px 24px;
 }
 .react-calendar__month-view__days {
   align-items: stretch;
@@ -296,11 +327,14 @@ button.primary {
   color: initial;
 }
 .react-calendar__tile {
-  display: flex;
-  flex-direction: row;
+  text-align: left;
+  padding: 2px 0 16px 0;
 }
 .react-calendar button {
   border: 2px solid transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* style the box of the current day */
@@ -337,8 +371,8 @@ button.react-calendar__tile > abbr {
 }
 .calendar-activity-icon {
   flex: 1 1 auto;
-  display: flex;
   padding-left: 5px;
+  text-align: center;
 }
 
 @media (prefers-color-scheme: dark) {
