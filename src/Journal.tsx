@@ -14,7 +14,6 @@ import {
 } from "./Database";
 import { Entry } from "./Classes";
 
-import { ColorSquare } from "./ColorPicker";
 import UserBadge from "./User";
 import { NEW_WORKOUT } from "./Workouts";
 import { firestore } from "firebase";
@@ -29,15 +28,19 @@ const CalendarTile = ({ date, view, hotDates, workouts }) => {
 
   const workoutsForDay = hotDates[date.toDateString()];
   if (view === "month" && workoutsForDay) {
-    return workoutsForDay.map((workoutRef, i) => {
-      if (workoutRef) {
-        const workout = findWorkoutById(workoutRef.id, workouts);
-        if (workout) {
-          return <ColorSquare key={i} color={workout.color} size={8} />;
-        }
-      }
-      return null;
-    });
+    return (
+      <div className="calendar-activity-icon">
+        {workoutsForDay.map((workoutRef, i) => {
+          if (workoutRef) {
+            const workout = findWorkoutById(workoutRef.id, workouts);
+            if (workout) {
+              return workout.emoji;
+            }
+          }
+          return null;
+        })}
+      </div>
+    );
   }
   return null;
 };
@@ -182,7 +185,6 @@ export default class Journal extends React.Component<
   };
 
   fetchHotDates = async (start: moment.Moment, end: moment.Moment) => {
-    debugger;
     const { user } = this.props;
     const { entriesSnapshot } = this.state;
 
@@ -557,7 +559,9 @@ const JournalEntryDisplay = ({
         {...creator}
         size={34}
         subtitle={entryTime.toLocaleString()}
-        noun={workout ? workout.title : undefined}
+        noun={`${workout && workout.emoji ? workout.emoji + " " : ""}${
+          workout ? workout.title : ""
+        }`}
       />
       <div className="card-content">
         <h4>{title}</h4>
