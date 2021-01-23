@@ -9,6 +9,8 @@
   --calendar-border: #e6e5f7;
   --calendar-grid-horizontal: #daf7f5;
   --calendar-grid-vertical: #ecedf4;
+  --calendar-background-zig: #c1fffa7d;
+  --calendar-background-zag: #fffce07d;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,6 +24,8 @@
     --calendar-border: #1f3952;
     --calendar-grid-horizontal: #2c3c3a;
     --calendar-grid-vertical: #2b343e;
+    --calendar-background-zig: #08685256;
+    --calendar-background-zag: #27405e52;
   }
 }
 
@@ -337,6 +341,26 @@ button.primary {
   align-items: center;
 }
 
+/* zig-zag for active days 
+   https://www.magicpattern.design/tools/css-backgrounds */
+.calendar-active-day {
+  background-image: linear-gradient(
+      135deg,
+      var(--calendar-background-zig) 25%,
+      transparent 25%
+    ),
+    linear-gradient(225deg, var(--calendar-background-zig) 25%, #0000 25%),
+    linear-gradient(45deg, var(--calendar-background-zig) 25%, transparent 25%),
+    linear-gradient(
+      315deg,
+      var(--calendar-background-zig) 25%,
+      var(--calendar-background-zag) 25%
+    );
+  background-position: 10px 0, 10px 0, 0 0, 0 0;
+  background-size: 20px 20px;
+  background-repeat: repeat;
+}
+
 /* style the box of the current day */
 .react-calendar button.react-calendar__tile--now {
   background: none;
@@ -373,6 +397,7 @@ button.react-calendar__tile > abbr {
   flex: 1 1 auto;
   padding-left: 5px;
   text-align: center;
+  word-break: break-all;
 }
 
 @media (prefers-color-scheme: dark) {

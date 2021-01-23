@@ -41,6 +41,15 @@ const CalendarTile = ({ date, view, hotDates, workouts }) => {
   return null;
 };
 
+function getTileClassName(date, view, hotDates): string | null {
+  if (view === "month") {
+    if (hotDates[date.toDateString()]) {
+      return "calendar-active-day";
+    }
+  }
+  return null;
+}
+
 function getHotDates(entriesSnapshot: firestore.QuerySnapshot) {
   const hotDates = {};
   entriesSnapshot.forEach((doc) => {
@@ -248,6 +257,9 @@ export default class Journal extends React.Component<
               workouts={workouts}
             />
           )}
+          tileClassName={({ date, view }) =>
+            getTileClassName(date, view, hotDates)
+          }
         />
         <h4>{startTime.format("LL")}</h4>
         {entries.map((entry: Entry, index) => (
