@@ -11,6 +11,7 @@
   --calendar-grid-vertical: #ecedf4;
   --calendar-background-zig: #c1fffa7d;
   --calendar-background-zag: #fffce07d;
+  --calendar-current-day-border: #00b6db;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -332,7 +333,7 @@ button.primary {
 }
 .react-calendar__tile {
   text-align: left;
-  padding: 2px 0 16px 0;
+  padding: 2px 0 8px 0;
 }
 .react-calendar button {
   border: 2px solid transparent;
@@ -341,9 +342,42 @@ button.primary {
   align-items: center;
 }
 
+/* style the box of the current day */
+.react-calendar__tile--now {
+  background: none;
+  color: var(--text-main);
+}
+
+/* hovered day focus style */
+.react-calendar__tile:enabled:hover {
+  background-color: var(--calendar-hover);
+  color: var(--text-main);
+}
+
+.react-calendar__tile:enabled:focus {
+  background-color: transparent;
+}
+
+.react-calendar__tile > abbr {
+  border: 2px dotted transparent;
+  border-radius: 50%;
+  flex: 0 1 auto;
+  padding: 3px;
+}
+/* style the number inside the box of the current day */
+.react-calendar__tile--now > abbr {
+  border-color: var(--calendar-current-day-border);
+}
+
+button.react-calendar__tile--active {
+  border: 2px solid var(--primary);
+  background: inherit;
+  color: var(--text-main);
+}
+
 /* zig-zag for active days 
    https://www.magicpattern.design/tools/css-backgrounds */
-.calendar-active-day {
+button.calendar-active-day {
   background-image: linear-gradient(
       135deg,
       var(--calendar-background-zig) 25%,
@@ -361,38 +395,6 @@ button.primary {
   background-repeat: repeat;
 }
 
-/* style the box of the current day */
-.react-calendar button.react-calendar__tile--now {
-  background: none;
-  color: var(--text-main);
-}
-/* style the number inside the box of the current day */
-.react-calendar button.react-calendar__tile--now > abbr {
-  border: 2px dotted var(--primary);
-  border-radius: 50%;
-  color: var(--text-main);
-}
-
-button.react-calendar__tile--active {
-  border: 2px solid var(--primary);
-  background: none;
-  color: var(--text-main);
-}
-
-/* hovered day focus style */
-.react-calendar__tile:enabled:hover {
-  background-color: var(--calendar-hover);
-  color: var(--text-main);
-}
-
-.react-calendar__tile:enabled:focus {
-  background-color: transparent;
-}
-
-button.react-calendar__tile > abbr {
-  flex: 0 1 auto;
-  padding: 3px;
-}
 .calendar-activity-icon {
   flex: 1 1 auto;
   padding-left: 5px;
