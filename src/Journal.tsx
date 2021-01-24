@@ -14,7 +14,6 @@ import {
 } from "./Database";
 import { Entry } from "./Classes";
 
-import { ColorSquare } from "./ColorPicker";
 import UserBadge from "./User";
 import { NEW_WORKOUT } from "./Workouts";
 import { firestore } from "firebase";
@@ -23,24 +22,33 @@ import boney from "./images/boney_dig.gif";
 const DISPLAY_INTERVAL_DAYS = 7;
 
 const CalendarTile = ({ date, view, hotDates, workouts }) => {
-  if (Object.keys(hotDates).length === 0) {
-    return null;
-  }
-
-  const workoutsForDay = hotDates[date.toDateString()];
-  if (view === "month" && workoutsForDay) {
-    return workoutsForDay.map((workoutRef, i) => {
-      if (workoutRef) {
-        const workout = findWorkoutById(workoutRef.id, workouts);
-        if (workout) {
-          return <ColorSquare key={i} color={workout.color} size={8} />;
-        }
-      }
-      return null;
-    });
+  const workoutsForDay = hotDates[date.toDateString()] || [];
+  if (view === "month") {
+    return (
+      <div className="calendar-activity-icon">
+        {workoutsForDay.map((workoutRef) => {
+          if (workoutRef) {
+            const workout = findWorkoutById(workoutRef.id, workouts);
+            if (workout) {
+              return workout.emoji;
+            }
+          }
+          return null;
+        })}
+      </div>
+    );
   }
   return null;
 };
+
+function getTileClassName(date, view, hotDates): string | null {
+  if (view === "month") {
+    if (hotDates[date.toDateString()]) {
+      return "calendar-active-day";
+    }
+  }
+  return null;
+}
 
 function getHotDates(entriesSnapshot: firestore.QuerySnapshot) {
   const hotDates = {};
@@ -182,7 +190,6 @@ export default class Journal extends React.Component<
   };
 
   fetchHotDates = async (start: moment.Moment, end: moment.Moment) => {
-    debugger;
     const { user } = this.props;
     const { entriesSnapshot } = this.state;
 
@@ -250,6 +257,9 @@ export default class Journal extends React.Component<
               workouts={workouts}
             />
           )}
+          tileClassName={({ date, view }) =>
+            getTileClassName(date, view, hotDates)
+          }
         />
         <h4>{startTime.format("LL")}</h4>
         {entries.map((entry: Entry, index) => (
@@ -557,7 +567,9 @@ const JournalEntryDisplay = ({
         {...creator}
         size={34}
         subtitle={entryTime.toLocaleString()}
-        noun={workout ? workout.title : undefined}
+        noun={`${workout && workout.emoji ? workout.emoji + " " : ""}${
+          workout ? workout.title : ""
+        }`}
       />
       <div className="card-content">
         <h4>{title}</h4>

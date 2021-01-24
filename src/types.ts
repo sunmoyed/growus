@@ -38,7 +38,8 @@ export type Workout = {
   exercises: Array<string>;
   userid: string;
   id?: string;
-  color: string; // TODO validate
+  color?: string; // deprecated
+  emoji?: string; // the ? exists because of schema change.
 };
 
 export type EntryFirebase = {

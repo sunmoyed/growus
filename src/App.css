@@ -3,13 +3,30 @@
   --blockquote: #ece8f2;
   --title-background: #ecf8fb;
   --icon: #91d2d9;
+
+  /* calendar */
+  --calendar-hover: #ffe93738;
+  --calendar-border: #e6e5f7;
+  --calendar-grid-horizontal: #daf7f5;
+  --calendar-grid-vertical: #ecedf4;
+  --calendar-background-zig: #c1fffa7d;
+  --calendar-background-zag: #fffce07d;
+  --calendar-current-day-border: #00b6db;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --title-background: #1d7186;
     --blockquote: #3d3f50;
+    --title-background: #1d7186;
     --icon: #c3d7db;
+
+    /* calendar */
+    --calendar-hover: #77ffff4f;
+    --calendar-border: #1f3952;
+    --calendar-grid-horizontal: #2c3c3a;
+    --calendar-grid-vertical: #2b343e;
+    --calendar-background-zig: #08685256;
+    --calendar-background-zag: #27405e52;
   }
 }
 
@@ -245,6 +262,11 @@ ul.description-list {
   font-size: 24px;
 }
 
+button.primary {
+  background: var(--primary);
+  color: var(--text-main);
+}
+
 .card {
   margin-bottom: 30px;
 }
@@ -268,29 +290,119 @@ ul.description-list {
 
 /* react-calendar */
 .react-calendar {
-  border: none;
   background: transparent;
+  width: 100%;
+  border: 2px solid var(--calendar-border);
+  border-radius: 5px;
 }
 .react-calendar__navigation {
   min-width: 20px;
+  border-bottom: 1px solid var(--primary);
+  margin-bottom: 0;
+  align-items: stretch;
+}
+.react-calendar__navigation button {
+  min-width: 44px;
+  background: none;
+  flex: 0 1 auto;
+  padding: 10px 14px;
 }
 .react-calendar__navigation__label {
   min-width: 50px;
 }
+.react-calendar__viewContainer {
+  /* grid pattern 
+  * https://www.magicpattern.design/tools/css-backgrounds
+  */
+  background-image: linear-gradient(
+      var(--calendar-grid-horizontal) 1.2000000000000002px,
+      transparent 1.2000000000000002px
+    ),
+    linear-gradient(
+      to right,
+      var(--calendar-grid-vertical) 1.2000000000000002px,
+      var(--background-body) 1.2000000000000002px
+    );
+  background-size: 24px 24px;
+}
 .react-calendar__month-view__days {
-  align-items: baseline;
+  align-items: stretch;
 }
 .react-calendar__month-view__days__day--weekend {
   color: initial;
 }
-.react-calendar__tile--active {
-  background: #91d2d9;
+.react-calendar__tile {
+  text-align: left;
+  padding: 2px 0 8px 0;
+}
+.react-calendar button {
+  border: 2px solid transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* style the box of the current day */
+.react-calendar__tile--now {
+  background: none;
+  color: var(--text-main);
+}
+
+/* hovered day focus style */
+.react-calendar__tile:enabled:hover {
+  background-color: var(--calendar-hover);
+  color: var(--text-main);
+}
+
+.react-calendar__tile:enabled:focus {
+  background-color: transparent;
+}
+
+.react-calendar__tile > abbr {
+  border: 2px dotted transparent;
+  border-radius: 50%;
+  flex: 0 1 auto;
+  padding: 3px;
+}
+/* style the number inside the box of the current day */
+.react-calendar__tile--now > abbr {
+  border-color: var(--calendar-current-day-border);
+}
+
+button.react-calendar__tile--active {
+  border: 2px solid var(--primary);
+  background: inherit;
+  color: var(--text-main);
+}
+
+/* zig-zag for active days 
+   https://www.magicpattern.design/tools/css-backgrounds */
+button.calendar-active-day {
+  background-image: linear-gradient(
+      135deg,
+      var(--calendar-background-zig) 25%,
+      transparent 25%
+    ),
+    linear-gradient(225deg, var(--calendar-background-zig) 25%, #0000 25%),
+    linear-gradient(45deg, var(--calendar-background-zig) 25%, transparent 25%),
+    linear-gradient(
+      315deg,
+      var(--calendar-background-zig) 25%,
+      var(--calendar-background-zag) 25%
+    );
+  background-position: 10px 0, 10px 0, 0 0, 0 0;
+  background-size: 20px 20px;
+  background-repeat: repeat;
+}
+
+.calendar-activity-icon {
+  flex: 1 1 auto;
+  padding-left: 5px;
+  text-align: center;
+  word-break: break-all;
 }
 
 @media (prefers-color-scheme: dark) {
-  .react-calendar__tile--active {
-    background: #2b7185;
-  }
   .react-calendar__month-view__days__day--weekend {
     color: #ece8f2;
   }

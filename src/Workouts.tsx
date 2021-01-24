@@ -1,37 +1,27 @@
-import React from "react";
+import React, { useRef, useState, useEffect } from "react";
+import { EmojiButton } from "@joeattardi/emoji-button";
 import { Exercise, Workout } from "./types";
 import {
   watchExercises,
   watchWorkouts,
   createWorkout,
   deleteWorkout,
-  updateWorkout
+  updateWorkout,
 } from "./Database";
-import ColorPicker, { ColorSquare } from "./ColorPicker";
 import { ExerciseList } from "./Exercises";
-
-const WORKOUT_COLORS = [
-  "ffdbb9",
-  "fff1aa",
-  "cdfba6",
-  "97efc4",
-  "77f5e6",
-  "77d5ff",
-  "95b5ff"
-];
 
 export const NEW_WORKOUT = {
   title: "",
   description: "",
   exercises: [],
   userid: "",
-  color: WORKOUT_COLORS[0]
+  emoji: undefined,
 };
 
 function sortExercises(ids: Array<string>, bank: Array<Exercise>) {
   const availableExercises: Array<Exercise> = [];
   const workoutExercises: Array<Exercise> = [];
-  bank.forEach(exercise => {
+  bank.forEach((exercise) => {
     if (exercise.id && ids.includes(exercise.id)) {
       workoutExercises.push(exercise);
     } else {
@@ -85,65 +75,102 @@ export default class Workouts extends React.PureComponent {
 
 class EditWorkout extends React.PureComponent<
   { workout: Workout; exerciseBank: Array<Exercise> },
-  { color: string; error: string; exercises: Array<string> }
+  { error: string; exercises: Array<string>; emoji: string; touched: boolean }
 > {
   state = {
-    color: this.props.workout.color || WORKOUT_COLORS[0],
+    emoji: this.props.workout.emoji || randomEmoji(),
     error: "",
-    exercises: this.props.workout ? this.props.workout.exercises : []
+    exercises: this.props.workout ? this.props.workout.exercises : [],
+    touched: false,
   };
 
-  addExercise = event => {
+  constructor(props) {
+    super(props);
+
+    // If there wasn't an emoji assigned to this workout, add a random one.
+    if (this.props.workout.id && !this.props.workout.emoji) {
+      this.addEmojiToWorkout();
+    }
+  }
+  componentDidMount() {
+    window.addEventListener("beforeunload", this.beforeunload.bind(this));
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("beforeunload", this.beforeunload.bind(this));
+  }
+
+  beforeunload(e) {
+    // create warning popup if there's unsaved workouts
+    if (this.state.touched) {
+      e.preventDefault();
+      e.returnValue = true;
+    }
+  }
+
+  addEmojiToWorkout() {
+    const { workout } = this.props;
+    const { color, title, description, exercises } = workout;
+    updateWorkout(workout.id, {
+      color,
+      title,
+      description,
+      exercises,
+      emoji: this.state.emoji,
+    });
+  }
+
+  addExercise = (event) => {
     const exerciseID = event.target.value;
     if (exerciseID) {
-      this.setState(state => {
+      this.setState((state) => {
         const exercises = state.exercises.slice();
         const duplicate = exercises.includes(exerciseID);
         if (!duplicate) {
           exercises.push(exerciseID);
         }
 
-        return { exercises };
+        return { exercises, touched: true };
       });
 
       event.target.selectedIndex = null;
     }
   };
 
-  removeExercise = id => {
+  removeExercise = (id) => {
     const { exercises } = this.state;
     var index = exercises.indexOf(id);
     if (index > -1) {
       const newExercises = exercises.slice();
       newExercises.splice(index, 1);
 
-      this.setState({ exercises: newExercises });
+      this.setState({ exercises: newExercises, touched: true });
     }
   };
 
-  handleCreateWorkout = async event => {
+  handleCreateWorkout = async (event) => {
     event.preventDefault();
     const form = new FormData(event.target);
     const title = form.get("title");
     const description = form.get("description");
     const { workout } = this.props;
-    const { color, exercises } = this.state;
+    const { emoji, exercises } = this.state;
 
     if (!title) {
       this.setState({ error: "The workout needs a title" });
       return;
     }
     if (workout.id) {
-      await updateWorkout(workout.id, { color, title, description, exercises });
-      this.setState({ error: "" });
+      await updateWorkout(workout.id, { emoji, title, description, exercises });
+      this.setState({ error: "", touched: false });
     } else {
-      createWorkout(title, description, exercises, color);
-      this.setState({ error: "" });
+      createWorkout(title, description, exercises, emoji);
+      this.setState({ error: "", touched: false });
       event.target.reset();
     }
   };
 
-  handleDeleteWorkout = async e => {
+  handleDeleteWorkout = async (e) => {
     const { workout } = this.props;
 
     if (window.confirm("Are you sure you wish to delete this workout?")) {
@@ -151,11 +178,14 @@ class EditWorkout extends React.PureComponent<
     }
   };
 
-  handleColorPick = color => this.setState({ color });
+  handleEmojiSelect = (emoji: string) =>
+    this.setState({ emoji, touched: true });
+
+  handleChange = () => this.setState({ touched: true });
 
   render() {
     const { exerciseBank, workout } = this.props;
-    const { color, error, exercises } = this.state;
+    const { emoji, error, exercises, touched } = this.state;
     const [availableExercises, workoutExercises] = sortExercises(
       exercises,
       exerciseBank
@@ -165,12 +195,9 @@ class EditWorkout extends React.PureComponent<
       <section className="workout">
         {error && <p className="error">{error}</p>}
         <div className="workout-badge">
-          <ColorPicker
-            colors={WORKOUT_COLORS}
-            color={color}
-            onColorClick={this.handleColorPick}
-            lineHeight={30}
-            size={20}
+          <EmojiPicker
+            initialEmoji={emoji}
+            onEmojiSelect={this.handleEmojiSelect}
           />
           <form onSubmit={this.handleCreateWorkout}>
             <label>
@@ -179,6 +206,7 @@ class EditWorkout extends React.PureComponent<
                 name="title"
                 defaultValue={workout && workout.title}
                 placeholder="workout name"
+                onChange={this.handleChange}
               />
             </label>
             <label>
@@ -187,6 +215,7 @@ class EditWorkout extends React.PureComponent<
                 name="description"
                 defaultValue={workout && workout.description}
                 placeholder="workout description"
+                onChange={this.handleChange}
               />
             </label>
             <ExerciseList
@@ -196,7 +225,7 @@ class EditWorkout extends React.PureComponent<
             <label>
               <select
                 name="exercise"
-                id="exercise-select"
+                id={`exercise-select-${workout.id}`}
                 onChange={this.addExercise}
               >
                 <option value="">add exercises</option>
@@ -212,7 +241,13 @@ class EditWorkout extends React.PureComponent<
               </select>
             </label>
             <div>
-              <button type="submit">{workout.id ? "update" : "create"}</button>
+              <button
+                className={touched ? "primary" : ""}
+                type="submit"
+                disabled={!touched}
+              >
+                {workout.id ? "update" : "create"}
+              </button>
               {workout.id && (
                 <button onClick={this.handleDeleteWorkout}>delete</button>
               )}
@@ -226,7 +261,201 @@ class EditWorkout extends React.PureComponent<
 
 export const WorkoutLabel = ({ workout }) => (
   <div style={{ display: "flex", alignItems: "center" }}>
-    <ColorSquare color={workout.color} size={16} />
+    {workout.emoji}
     <span style={{ marginLeft: "6px" }}> {workout.title}</span>
   </div>
 );
+
+type TODO = any;
+
+function EmojiPicker({
+  initialEmoji,
+  onEmojiSelect,
+}: {
+  initialEmoji: string;
+  onEmojiSelect?: (emoji: string) => void;
+}) {
+  const buttonRef = useRef<TODO>();
+  const [picker, setPicker] = useState<EmojiButton | null>(null);
+  const [emoji, setEmoji] = useState<string>(initialEmoji);
+
+  useEffect(() => {
+    const pickerObj = new EmojiButton({ style: "native" });
+
+    pickerObj.on("emoji", (selection) => {
+      setEmoji(selection.emoji);
+      onEmojiSelect && onEmojiSelect(selection.emoji as string);
+    });
+
+    setPicker(pickerObj);
+  }, [onEmojiSelect]);
+
+  function togglePicker() {
+    if (picker) {
+      picker.togglePicker(buttonRef.current);
+    }
+  }
+
+  return (
+    <button
+      ref={buttonRef}
+      onClick={togglePicker}
+      style={{ padding: "10px 15px" }}
+    >
+      <span style={{ fontSize: "24px" }}>{emoji}</span>
+    </button>
+  );
+}
+
+function randomEmoji(): string {
+  const emojis = [
+    "🐶",
+    "🐺",
+    "🐱",
+    "🐭",
+    "🐹",
+    "🐰",
+    "🐸",
+    "🐯",
+    "🐨",
+    "🐻",
+    "🐷",
+    "🐽",
+    "🐮",
+    "🐗",
+    "🐵",
+    "🐒",
+    "🐴",
+    "🐑",
+    "🐘",
+    "🐼",
+    "🐧",
+    "🐦",
+    "🐤",
+    "🐥",
+    "🐣",
+    "🐔",
+    "🐍",
+    "🐢",
+    "🐛",
+    "🐝",
+    "🐜",
+    "🐞",
+    "🐌",
+    "🐙",
+    "🐚",
+    "🐠",
+    "🐟",
+    "🐬",
+    "🐳",
+    "🐋",
+    "🐄",
+    "🐏",
+    "🐀",
+    "🐃",
+    "🐅",
+    "🐇",
+    "🐉",
+    "🐎",
+    "🐐",
+    "🐓",
+    "🐕",
+    "🐖",
+    "🐁",
+    "🐂",
+    "🐲",
+    "🐡",
+    "🐊",
+    "🐫",
+    "🐪",
+    "🐆",
+    "🐈",
+    "🐩",
+    "🐾",
+    "💐",
+    "🌸",
+    "🌷",
+    "🍀",
+    "🌹",
+    "🌻",
+    "🌺",
+    "🍁",
+    "🍃",
+    "🍂",
+    "🌿",
+    "🌾",
+    "🍄",
+    "🌵",
+    "🌴",
+    "🌲",
+    "🌳",
+    "🌼",
+    "🏇",
+    "🏆",
+    "🎿",
+    "🏂",
+    "🏊",
+    "🏄",
+    "🎣",
+    "☕",
+    "🍵",
+    "🍶",
+    "🍼",
+    "🍺",
+    "🍻",
+    "🍸",
+    "🍹",
+    "🍷",
+    "🍴",
+    "🍕",
+    "🍔",
+    "🍟",
+    "🍗",
+    "🍖",
+    "🍝",
+    "🍛",
+    "🍤",
+    "🍱",
+    "🍣",
+    "🍥",
+    "🍙",
+    "🍘",
+    "🍚",
+    "🍜",
+    "🍲",
+    "🍢",
+    "🍡",
+    "🍳",
+    "🍞",
+    "🍩",
+    "🍮",
+    "🍦",
+    "🍨",
+    "🍧",
+    "🎂",
+    "🍰",
+    "🍪",
+    "🍫",
+    "🍬",
+    "🍭",
+    "🍯",
+    "🍎",
+    "🍏",
+    "🍊",
+    "🍋",
+    "🍒",
+    "🍇",
+    "🍉",
+    "🍓",
+    "🍑",
+    "🍈",
+    "🍌",
+    "🍐",
+    "🍍",
+    "🍠",
+    "🍆",
+    "🍅",
+    "🌽",
+  ];
+  return emojis[Math.floor(Math.random() * emojis.length)];
+}

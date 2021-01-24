@@ -174,13 +174,13 @@ export async function watchWorkouts(onWorkoutsChange) {
   });
 }
 
-export async function createWorkout(title, description, exercises, color) {
+export async function createWorkout(title, description, exercises, emoji) {
   const data: Workout = {
     title: title,
     description: description,
     exercises: exercises, // TODO should be references
     userid: REFS.user ? REFS.user.id : "",
-    color: color
+    emoji,
   };
   REFS.workouts.add({ ...data });
 }
