@@ -4,13 +4,13 @@ import { User as FirebaseUser } from "firebase/app";
 import Profile from "./Profile";
 import Encouragements, {
   RandomEncouragement,
-  AddEncouragement
+  AddEncouragement,
 } from "./Encouragement";
 import Exercises from "./Exercises";
 import Workouts from "./Workouts";
 import Journal, { Entries } from "./Journal";
 import YearlyReview from "./YearlyReview";
-import { Link } from "./History";
+import { Link, LinkButton } from "./History";
 import { User } from "./types";
 
 export type PageProps = {
@@ -25,6 +25,10 @@ const Home = (props: PageProps) => (
     <Navigation page={props.page} />
     <RandomEncouragement />
     <Page {...props} subpaths={getSubpaths(window.location.pathname)} />
+    <NewEntryButton
+      page={props.page}
+      subpaths={getSubpaths(window.location.pathname)}
+    />
   </div>
 );
 
@@ -35,7 +39,7 @@ const Page = ({ page, ...props }: PageProps) => {
     case "journal":
       return (
         <div>
-          <Journal {...props} />
+          <Journal {...props} showAddEntry={props.subpaths[0] === "new"} />
         </div>
       );
     case "profile":
@@ -100,10 +104,40 @@ const Navigation = ({ page }) => (
   </div>
 );
 
+const NewEntryButton = ({
+  page,
+  subpaths,
+}: {
+  page: string;
+  subpaths: Array<string>;
+}) => (
+  <LinkButton
+    style={{
+      position: "fixed",
+      bottom: 0,
+      right: 0,
+      width: "50px",
+      height: "50px",
+      borderRadius: "50%",
+      color: "var(--text-muted)",
+      background: "var(--new-entry-button)",
+      padding: 0,
+      zIndex: 2001,
+    }}
+    href={isNewEntryPage(page, subpaths) ? "/journal" : "/journal/new"}
+  >
+    {isNewEntryPage(page, subpaths) ? "x" : "+🌱"}
+  </LinkButton>
+);
+
 function getSubpaths(pathname: string): Array<string> {
   return pathname.split("/").slice(2);
 }
 
 function getProfilePage(subpaths: Array<string>): string {
   return subpaths[0] || "";
+}
+
+function isNewEntryPage(page, subpaths): boolean {
+  return page === "journal" && subpaths[0] === "new";
 }
