@@ -73,6 +73,7 @@ function findWorkoutById(id, workouts: Array<Workout>) {
 
 type JournalState = {
   cancelEntriesWatcher: () => void;
+  cancelWorkoutsWatcher: () => void;
   workouts: Workout[];
   entries: any[];
   hotDates: any;
@@ -90,7 +91,13 @@ export default class Journal extends React.Component<
 > {
   constructor(props) {
     super(props);
-    watchWorkouts(this.handleWorkoutsChange);
+
+    let cancelWorkoutsWatcher;
+    watchWorkouts(this.handleWorkoutsChange, props.user.uid).then((fn) => {
+      cancelWorkoutsWatcher = fn;
+      this.setState({ cancelWorkoutsWatcher });
+    });
+
     let cancelEntriesWatcher;
     watchEntries(this.handleEntriesChange).then((fn) => {
       cancelEntriesWatcher = fn;
@@ -99,6 +106,7 @@ export default class Journal extends React.Component<
 
     this.state = {
       cancelEntriesWatcher,
+      cancelWorkoutsWatcher,
       workouts: [],
       entries: [],
       hotDates: {},
@@ -111,6 +119,7 @@ export default class Journal extends React.Component<
 
   componentWillUnmount() {
     this.state.cancelEntriesWatcher();
+    this.state.cancelWorkoutsWatcher();
   }
 
   handleWorkoutsChange = (workouts: Array<Workout>) => {
@@ -513,6 +522,7 @@ class JournalEntry extends React.PureComponent<
                 return (
                   <option key={workout.id} value={index}>
                     {workout.title}
+                    {workout.emoji && ` ${workout.emoji}`}
                     {workout.description && " - "}
                     {workout.description}
                   </option>

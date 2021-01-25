@@ -32,7 +32,7 @@ export default class Review extends React.Component<
   constructor(props) {
     super(props);
     let cancelWorkoutsWatcher;
-    watchWorkouts(this.handleWorkoutsChange).then((fn) => {
+    watchWorkouts(this.handleWorkoutsChange, props.user.uid).then((fn) => {
       cancelWorkoutsWatcher = fn;
       this.setState({ cancelWorkoutsWatcher });
     });

@@ -161,17 +161,29 @@ export async function createExercise(name, description) {
   REFS.exercises.add({ ...data });
 }
 
-export async function watchWorkouts(onWorkoutsChange) {
-  return REFS.workouts.onSnapshot((snapshot) => {
-    snapshot.query
-      .where("userid", "==", REFS && REFS.user ? REFS.user.id : "")
-      .get()
-      .then(result =>
-        snapshotToList(result).then(list => {
-          onWorkoutsChange(list);
+export async function watchWorkouts(onWorkoutsChange, uid: string) {
+  return (
+    REFS.workouts
+      // this doesn't work because firestore's orderby is case sensitive.
+      // Sort in the browser instead.
+      // .orderBy("title", "asc")
+      .where("userid", "==", uid)
+      .onSnapshot((snapshot) => {
+        const workouts: firestore.DocumentData[] = [];
+        snapshot.forEach((doc) => {
+          const workout = doc.data();
+          workout.id = doc.id;
+          workouts.push(workout);
+        });
+
+        // alphebetize list, case in-sensitive.
+        workouts.sort((a, b) =>
+          a.title.toLowerCase() > b.title.toLowerCase() ? 1 : -1
+        );
+
+        onWorkoutsChange(workouts as Array<Workout>);
         })
       );
-  });
 }
 
 export async function createWorkout(title, description, exercises, emoji) {
