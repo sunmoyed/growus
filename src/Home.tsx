@@ -63,7 +63,7 @@ const Page = ({ page, ...props }: PageProps) => {
     case "workouts":
       return (
         <div>
-          <Workouts />
+          <Workouts {...props} />
         </div>
       );
     case "yearlyreview":

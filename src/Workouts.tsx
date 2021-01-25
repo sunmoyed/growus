@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { EmojiButton } from "@joeattardi/emoji-button";
-import { Exercise, Workout } from "./types";
+import { Exercise, Workout, User } from "./types";
 import {
   watchExercises,
   watchWorkouts,
@@ -32,13 +32,38 @@ function sortExercises(ids: Array<string>, bank: Array<Exercise>) {
   return [availableExercises, workoutExercises];
 }
 
-export default class Workouts extends React.PureComponent {
-  state = { exerciseBank: [], workouts: [] };
+type WorkoutsProps = {
+  userData: User;
+};
 
+type WorkoutsState = {
+  cancelWorkoutsWatcher: () => void;
+  exerciseBank: Array<Exercise>;
+  workouts: Array<Workout>;
+};
+
+export default class Workouts extends React.PureComponent<
+  WorkoutsProps,
+  WorkoutsState
+> {
   constructor(props) {
     super(props);
+    let cancelWorkoutsWatcher;
     watchExercises(this.handleExercisesChange);
-    watchWorkouts(this.handleWorkoutsChange);
+    watchWorkouts(this.handleWorkoutsChange, props.user.uid).then((fn) => {
+      cancelWorkoutsWatcher = fn;
+      this.setState({ cancelWorkoutsWatcher });
+    });
+
+    this.state = {
+      cancelWorkoutsWatcher,
+      exerciseBank: [],
+      workouts: [],
+    };
+  }
+
+  componentWillUnmount() {
+    this.state.cancelWorkoutsWatcher();
   }
 
   handleExercisesChange = (newExercises: Array<Exercise>) => {
