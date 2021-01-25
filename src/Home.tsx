@@ -22,7 +22,6 @@ export type PageProps = {
 
 const Home = (props: PageProps) => (
   <div>
-    {props.page !== "yearlyreview" && <YearInReviewBanner />}
     <Navigation page={props.page} />
     <RandomEncouragement />
     <Page {...props} subpaths={getSubpaths(window.location.pathname)} />
@@ -83,12 +82,6 @@ const Page = ({ page, ...props }: PageProps) => {
       return <div>nothing to see here :^)</div>;
   }
 };
-
-const YearInReviewBanner = () => (
-  <div className="banner">
-    Check out your <Link href="/yearlyreview">2020 year of growing</Link> 🌱
-  </div>
-);
 
 const Navigation = ({ page }) => (
   <div className="list-row">
