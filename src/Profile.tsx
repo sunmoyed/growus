@@ -173,7 +173,7 @@ export default class Profile extends React.PureComponent<
 
     return (
       <div className="section">
-        <h3>Profile</h3>
+        <h3>Edit Profile</h3>
         {error && <p style={{ color: "red" }}>{error}</p>}
         <form className="section" onSubmit={this.updateAccount}>
           <label>
@@ -237,6 +237,9 @@ export default class Profile extends React.PureComponent<
             updated {updated.toDateString()} {updated.toLocaleTimeString()}
           </p>
         )}
+        <h3>Previous years in review</h3>
+        <Link href="/yearlyreview">2020</Link>
+        <h3>Account control</h3>
         <p>
           <button className="text-button" onClick={this.handleSignOut}>
             logout
