@@ -17,7 +17,6 @@ import { Entry } from "./Classes";
 import { goTo } from "./History";
 
 import UserBadge from "./User";
-import { NEW_WORKOUT } from "./Workouts";
 import Modal from "./Modal";
 import boney from "./images/boney_dig.gif";
 
@@ -463,7 +462,7 @@ type JournalEntryProps = {
 };
 type JournalEntryState = {
   error: string;
-  workout: Workout;
+  workout?: Workout;
   date: Date;
   showCalendar: boolean;
 };
@@ -474,7 +473,7 @@ class JournalEntry extends React.PureComponent<
 > {
   state = {
     error: "",
-    workout: NEW_WORKOUT,
+    workout: undefined,
     date: new Date(),
     showCalendar: false,
   };
@@ -494,7 +493,7 @@ class JournalEntry extends React.PureComponent<
     const content = form.get("content");
     const { workout, date } = this.state;
 
-    if (!workout || !workout.title) {
+    if (!workout) {
       this.setState({ error: "which workout did you do today?" });
       return;
     } else if (!title) {
@@ -503,7 +502,7 @@ class JournalEntry extends React.PureComponent<
     }
 
     createJournalEntry(title, content, workout, date);
-    this.setState({ error: "", workout: NEW_WORKOUT });
+    this.setState({ error: "", workout: undefined });
     event.target.reset();
     if (this.props.onNewEntryCreate) {
       this.props.onNewEntryCreate();

@@ -10,14 +10,6 @@ import {
 } from "./Database";
 import { ExerciseList } from "./Exercises";
 
-export const NEW_WORKOUT = {
-  title: "",
-  description: "",
-  exercises: [],
-  userid: "",
-  emoji: undefined,
-};
-
 function sortExercises(ids: Array<string>, bank: Array<Exercise>) {
   const availableExercises: Array<Exercise> = [];
   const workoutExercises: Array<Exercise> = [];
@@ -81,7 +73,7 @@ export default class Workouts extends React.PureComponent<
       <React.Fragment>
         <section>
           <h3>New workout</h3>
-          <EditWorkout workout={NEW_WORKOUT} exerciseBank={exerciseBank} />
+          <EditWorkout exerciseBank={exerciseBank} />
         </section>
         <section>
           <h3>Your workouts :)</h3>
@@ -99,11 +91,11 @@ export default class Workouts extends React.PureComponent<
 }
 
 class EditWorkout extends React.PureComponent<
-  { workout: Workout; exerciseBank: Array<Exercise> },
+  { workout?: Workout; exerciseBank: Array<Exercise> },
   { error: string; exercises: Array<string>; emoji: string; touched: boolean }
 > {
   state = {
-    emoji: this.props.workout.emoji || randomEmoji(),
+    emoji: this.props.workout?.emoji || randomEmoji(),
     error: "",
     exercises: this.props.workout ? this.props.workout.exercises : [],
     touched: false,
@@ -113,7 +105,7 @@ class EditWorkout extends React.PureComponent<
     super(props);
 
     // If there wasn't an emoji assigned to this workout, add a random one.
-    if (this.props.workout.id && !this.props.workout.emoji) {
+    if (this.props.workout?.id && !this.props.workout?.emoji) {
       this.addEmojiToWorkout();
     }
   }
@@ -135,7 +127,10 @@ class EditWorkout extends React.PureComponent<
 
   addEmojiToWorkout() {
     const { workout } = this.props;
-    const { color, title, description, exercises } = workout;
+    if (!workout) {
+      return;
+    }
+    const { color, title, description, exercises } = workout || {};
     updateWorkout(workout.id, {
       color,
       title,
@@ -185,7 +180,7 @@ class EditWorkout extends React.PureComponent<
       this.setState({ error: "The workout needs a title" });
       return;
     }
-    if (workout.id) {
+    if (workout?.id) {
       await updateWorkout(workout.id, { emoji, title, description, exercises });
       this.setState({ error: "", touched: false });
     } else {
@@ -199,7 +194,7 @@ class EditWorkout extends React.PureComponent<
     const { workout } = this.props;
 
     if (window.confirm("Are you sure you wish to delete this workout?")) {
-      deleteWorkout(workout.id);
+      deleteWorkout(workout?.id);
     }
   };
 
@@ -250,7 +245,7 @@ class EditWorkout extends React.PureComponent<
             <label>
               <select
                 name="exercise"
-                id={`exercise-select-${workout.id}`}
+                id={`exercise-select-${workout?.id}`}
                 onChange={this.addExercise}
               >
                 <option value="">add exercises</option>
@@ -271,9 +266,9 @@ class EditWorkout extends React.PureComponent<
                 type="submit"
                 disabled={!touched}
               >
-                {workout.id ? "update" : "create"}
+                {workout?.id ? "update" : "create"}
               </button>
-              {workout.id && (
+              {workout?.id && (
                 <button onClick={this.handleDeleteWorkout}>delete</button>
               )}
             </div>
