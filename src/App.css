@@ -1,5 +1,6 @@
 :root {
   --primary: #a7e4f0;
+  --new-entry-button: #fbf6cc;
   --blockquote: #ece8f2;
   --title-background: #ecf8fb;
   --icon: #91d2d9;
@@ -12,10 +13,17 @@
   --calendar-background-zig: #c1fffa7d;
   --calendar-background-zag: #fffce07d;
   --calendar-current-day-border: #00b6db;
+
+  /* modal */
+  --background-polka: #f7f6ff;
+  --background-polka-dots: #e09f85;
+  --modal-container-background: #ffffff87;
+  --modal-border: var(--border);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
+    --new-entry-button: #e8dc7b;
     --blockquote: #3d3f50;
     --title-background: #1d7186;
     --icon: #c3d7db;
@@ -27,6 +35,12 @@
     --calendar-grid-vertical: #2b343e;
     --calendar-background-zig: #08685256;
     --calendar-background-zag: #27405e52;
+
+    /* modal */
+    --background-polka: #161e2b;
+    --background-polka-dots: #753e28;
+    --modal-container-background: #35323e69;
+    --modal-border: #484848;
   }
 }
 
@@ -288,9 +302,40 @@ button.primary {
   text-align: left;
 }
 
+/* modal */
+.modal-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  background-image: radial-gradient(
+    var(--background-polka-dots) 1px,
+    var(--background-polka) 1px
+  );
+  background-size: 20px 20px;
+}
+.modal-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  max-width: 100%;
+  max-height: 100%;
+}
+.modal-body {
+  margin: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid var(--modal-border);
+  background: var(--modal-container-background);
+}
+
 /* react-calendar */
 .react-calendar {
-  background: transparent;
+  background: var(--background-body);
   width: 100%;
   border: 2px solid var(--calendar-border);
   border-radius: 5px;

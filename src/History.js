@@ -24,7 +24,7 @@ export const Link = ({
       ${hideTextDecoration ? "text-button-stealth" : ""} 
       ${selected ? "text-button-selected" : ""} `}
     href={href}
-    onClick={e => {
+    onClick={(e) => {
       e.preventDefault();
       history.push(href);
     }}
@@ -32,4 +32,21 @@ export const Link = ({
   >
     {children}
   </a>
+);
+
+export function goTo(href) {
+  history.push(href);
+}
+
+export const LinkButton = ({ children, href, ...props }) => (
+  <button
+    href={href}
+    onClick={(e) => {
+      e.preventDefault();
+      history.push(href);
+    }}
+    {...props}
+  >
+    {children}
+  </button>
 );

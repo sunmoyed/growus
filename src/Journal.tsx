@@ -1,6 +1,7 @@
 import React from "react";
 import Calendar from "react-calendar";
 import moment from "moment";
+import { firestore } from "firebase";
 
 import { Workout, Entry as EntryType, FirestoreUser, User } from "./types";
 import {
@@ -13,10 +14,11 @@ import {
   filterEntrySnapshotByUser,
 } from "./Database";
 import { Entry } from "./Classes";
+import { goTo } from "./History";
 
 import UserBadge from "./User";
 import { NEW_WORKOUT } from "./Workouts";
-import { firestore } from "firebase";
+import Modal from "./Modal";
 import boney from "./images/boney_dig.gif";
 
 const DISPLAY_INTERVAL_DAYS = 7;
@@ -86,6 +88,7 @@ export default class Journal extends React.Component<
   {
     user: FirestoreUser;
     userData: User;
+    showAddEntry: boolean;
   },
   JournalState
 > {
@@ -239,6 +242,10 @@ export default class Journal extends React.Component<
     }
   };
 
+  handleNewEntryCreated = () => {
+    goTo("/journal");
+  };
+
   render() {
     const {
       entries,
@@ -248,12 +255,17 @@ export default class Journal extends React.Component<
       startTime,
       hotDates,
     } = this.state;
-    const { userData } = this.props;
+    const { userData, showAddEntry } = this.props;
 
     return (
-      <div>
+      <>
+        {showAddEntry && (
+          <JournalEntry
+            workouts={workouts}
+            onNewEntryCreate={this.handleNewEntryCreated}
+          />
+        )}
         <h3>Your Journal</h3>
-        <JournalEntry workouts={workouts} />
         <Calendar
           className="section"
           onChange={this.handleNewDateClick}
@@ -287,7 +299,7 @@ export default class Journal extends React.Component<
             <button onClick={() => this.showMoreEntries(endTime)}>more</button>
           </React.Fragment>
         )}
-      </div>
+      </>
     );
   }
 }
@@ -444,7 +456,11 @@ const EntriesDisplay = ({ entries, users, workouts }: EntriesDisplayProps) => (
   </React.Fragment>
 );
 
-type JournalEntryProps = { workouts: Array<Workout>; entry?: EntryType };
+type JournalEntryProps = {
+  workouts: Array<Workout>;
+  entry?: EntryType;
+  onNewEntryCreate?: () => void;
+};
 type JournalEntryState = {
   error: string;
   workout: Workout;
@@ -478,7 +494,7 @@ class JournalEntry extends React.PureComponent<
     const content = form.get("content");
     const { workout, date } = this.state;
 
-    if (!workout) {
+    if (!workout || !workout.title) {
       this.setState({ error: "which workout did you do today?" });
       return;
     } else if (!title) {
@@ -489,6 +505,9 @@ class JournalEntry extends React.PureComponent<
     createJournalEntry(title, content, workout, date);
     this.setState({ error: "", workout: NEW_WORKOUT });
     event.target.reset();
+    if (this.props.onNewEntryCreate) {
+      this.props.onNewEntryCreate();
+    }
   };
 
   handleCalendarChange = (date: Date | Date[]) => {
@@ -507,11 +526,11 @@ class JournalEntry extends React.PureComponent<
     const { error, showCalendar, date } = this.state;
 
     return (
-      <div>
+      <Modal>
         {error && <p className="error">{error}</p>}
-        <form className="section" onSubmit={this.handleCreateEntry}>
+        <form onSubmit={this.handleCreateEntry}>
           <label>
-            How did you grow today?
+            How did you grow today? 🌱
             <select
               name="exercise"
               id="exercise-select"
@@ -534,7 +553,9 @@ class JournalEntry extends React.PureComponent<
             {date.toLocaleDateString()}
           </button>
           {showCalendar && (
-            <Calendar onChange={this.handleCalendarChange} value={date} />
+            <div style={{ position: "absolute" }}>
+              <Calendar onChange={this.handleCalendarChange} value={date} />
+            </div>
           )}
           <label>
             <input
@@ -553,7 +574,7 @@ class JournalEntry extends React.PureComponent<
           </label>
           <button type="submit">write in your journal</button>
         </form>
-      </div>
+      </Modal>
     );
   }
 }
