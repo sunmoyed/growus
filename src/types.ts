@@ -40,6 +40,7 @@ export type Workout = {
   id?: string;
   color?: string; // deprecated
   emoji?: string; // the ? exists because of schema change.
+  isQuickadd?: boolean;
 };
 
 export type EntryFirebase = {

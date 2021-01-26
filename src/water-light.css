@@ -286,7 +286,11 @@ input[type="radio"] {
   display: inline-block;
   vertical-align: middle;
   margin: 0;
-  margin-right: 2px;
+  margin-right: 6px;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  padding: 6px;
+  font-size: 30px;
 }
 
 input[type="radio"] {
@@ -309,8 +313,8 @@ input[type="radio"]:checked::before {
 }
 
 input[type="checkbox"]:checked::before {
-  content: "✔";
-  transform: translateY(-50%) translateY(0.5px) translateX(-6px);
+  content: "✓";
+  transform: translateY(-50%) translateY(-3px) translateX(-6px);
 }
 
 input[type="checkbox"]:active,
@@ -453,6 +457,7 @@ a {
 }
 
 a:hover {
+  -webkit-text-decoration: underline;
   text-decoration: underline;
 }
 

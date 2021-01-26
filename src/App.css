@@ -254,6 +254,7 @@ ul.description-list {
   cursor: pointer;
   color: var(--text-main);
   text-decoration: underline #aaa5a5;
+  -webkit-text-decoration: underline #aaa5a5;
   margin-left: -10px;
   padding: 0 10px;
 }
@@ -265,7 +266,9 @@ ul.description-list {
   margin: 0;
 }
 .text-button-selected {
+  text-decoration-thickness: 3px;
   text-decoration: underline 3px var(--primary);
+  -webkit-text-decoration: underline var(--primary);
 }
 .text-button:hover {
   color: var(--text-bright);
@@ -279,6 +282,12 @@ ul.description-list {
 button.primary {
   background: var(--primary);
   color: var(--text-main);
+}
+button.emoji {
+  padding: 5px 8px;
+  border-radius: 50%;
+  font-size: 20px;
+  background: var(--background);
 }
 
 .card {

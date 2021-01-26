@@ -186,13 +186,20 @@ export async function watchWorkouts(onWorkoutsChange, uid: string) {
       );
 }
 
-export async function createWorkout(title, description, exercises, emoji) {
+export async function createWorkout(
+  title,
+  description,
+  exercises,
+  emoji,
+  isQuickadd
+) {
   const data: Workout = {
     title: title,
     description: description,
     exercises: exercises, // TODO should be references
     userid: REFS.user ? REFS.user.id : "",
     emoji,
+    isQuickadd,
   };
   REFS.workouts.add({ ...data });
 }

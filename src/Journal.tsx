@@ -486,6 +486,11 @@ class JournalEntry extends React.PureComponent<
     }
   };
 
+  setWorkout = (e, workout) => {
+    e.preventDefault();
+    this.setState({ workout });
+  };
+
   handleCreateEntry = async (event) => {
     event.preventDefault();
     const form = new FormData(event.target);
@@ -522,7 +527,7 @@ class JournalEntry extends React.PureComponent<
 
   render() {
     const { workouts } = this.props;
-    const { error, showCalendar, date } = this.state;
+    const { error, showCalendar, date, workout } = this.state;
 
     return (
       <Modal>
@@ -530,10 +535,32 @@ class JournalEntry extends React.PureComponent<
         <form onSubmit={this.handleCreateEntry}>
           <label>
             How did you grow today? 🌱
+            <div
+              style={{
+                height: "36px",
+                margin: " 8px 0",
+                overflowX: "auto",
+                overflowY: "hidden",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {workouts.map((workout) =>
+                workout.isQuickadd ? (
+                  <button
+                    key={workout.id}
+                    className="emoji"
+                    onClick={(e) => this.setWorkout(e, workout)}
+                  >
+                    {workout.emoji}
+                  </button>
+                ) : null
+              )}
+            </div>
             <select
               name="exercise"
               id="exercise-select"
               onChange={this.selectWorkout}
+              value={workouts.findIndex((w) => w.id === workout?.id)}
             >
               <option value=""></option>
               {workouts.map((workout: Workout, index) => {

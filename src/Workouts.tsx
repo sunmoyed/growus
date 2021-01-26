@@ -173,6 +173,7 @@ class EditWorkout extends React.PureComponent<
     const form = new FormData(event.target);
     const title = form.get("title");
     const description = form.get("description");
+    const isQuickadd = form.get("is-quickadd");
     const { workout } = this.props;
     const { emoji, exercises } = this.state;
 
@@ -181,10 +182,16 @@ class EditWorkout extends React.PureComponent<
       return;
     }
     if (workout?.id) {
-      await updateWorkout(workout.id, { emoji, title, description, exercises });
+      await updateWorkout(workout.id, {
+        title,
+        description,
+        exercises,
+        emoji,
+        isQuickadd,
+      });
       this.setState({ error: "", touched: false });
     } else {
-      createWorkout(title, description, exercises, emoji);
+      createWorkout(title, description, exercises, emoji, isQuickadd);
       this.setState({ error: "", touched: false });
       event.target.reset();
     }
@@ -259,6 +266,15 @@ class EditWorkout extends React.PureComponent<
                   );
                 })}
               </select>
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                name="is-quickadd"
+                defaultChecked={workout?.isQuickadd}
+                onChange={this.handleChange}
+              />
+              journal shortcut
             </label>
             <div>
               <button
