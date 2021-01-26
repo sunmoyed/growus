@@ -596,6 +596,7 @@ class JournalEntry extends React.PureComponent<
               name="content"
               defaultValue={""}
               placeholder="what was it like? how did you feel?"
+              style={{ height: "6em" }}
             />
           </label>
           <button type="submit">write in your journal</button>
