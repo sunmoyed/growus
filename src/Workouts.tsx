@@ -174,6 +174,7 @@ class EditWorkout extends React.PureComponent<
     const title = form.get("title");
     const description = form.get("description");
     const isQuickadd = form.get("is-quickadd");
+    const isPhysicalActivity = form.get("is-physical-activity");
     const { workout } = this.props;
     const { emoji, exercises } = this.state;
 
@@ -188,10 +189,18 @@ class EditWorkout extends React.PureComponent<
         exercises,
         emoji,
         isQuickadd,
+        isPhysicalActivity,
       });
       this.setState({ error: "", touched: false });
     } else {
-      createWorkout(title, description, exercises, emoji, isQuickadd);
+      createWorkout(
+        title,
+        description,
+        exercises,
+        emoji,
+        isQuickadd,
+        isPhysicalActivity
+      );
       this.setState({ error: "", touched: false });
       event.target.reset();
     }
@@ -275,6 +284,15 @@ class EditWorkout extends React.PureComponent<
                 onChange={this.handleChange}
               />
               journal shortcut
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                name="is-physical-activity"
+                defaultChecked={!workout ? true : workout?.isPhysicalActivity}
+                onChange={this.handleChange}
+              />
+              count towards daily movement
             </label>
             <div>
               <button
