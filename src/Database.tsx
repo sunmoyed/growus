@@ -191,7 +191,8 @@ export async function createWorkout(
   description,
   exercises,
   emoji,
-  isQuickadd
+  isQuickadd,
+  isPhysicalActivity
 ) {
   const data: Workout = {
     title: title,
@@ -200,6 +201,7 @@ export async function createWorkout(
     userid: REFS.user ? REFS.user.id : "",
     emoji,
     isQuickadd,
+    isPhysicalActivity,
   };
   REFS.workouts.add({ ...data });
 }

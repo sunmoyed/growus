@@ -42,9 +42,20 @@ const CalendarTile = ({ date, view, hotDates, workouts }) => {
   return null;
 };
 
-function getTileClassName(date, view, hotDates): string | null {
+function getTileClassName(date, view, hotDates, workouts): string | null {
   if (view === "month") {
-    if (hotDates[date.toDateString()]) {
+    const workoutsForDay = hotDates[date.toDateString()] || [];
+    const isActive = workoutsForDay.some((workoutRef) => {
+      if (workoutRef) {
+        const workout = findWorkoutById(workoutRef.id, workouts);
+        console.log(workout, workout?.isPhysicalActivity);
+        if (workout?.isPhysicalActivity) {
+          return true;
+        }
+      }
+      return false;
+    });
+    if (isActive) {
       return "calendar-active-day";
     }
   }
@@ -278,7 +289,7 @@ export default class Journal extends React.Component<
             />
           )}
           tileClassName={({ date, view }) =>
-            getTileClassName(date, view, hotDates)
+            getTileClassName(date, view, hotDates, workouts)
           }
         />
         <h4>{startTime.format("LL")}</h4>
