@@ -48,7 +48,6 @@ function getTileClassName(date, view, hotDates, workouts): string | null {
     const isActive = workoutsForDay.some((workoutRef) => {
       if (workoutRef) {
         const workout = findWorkoutById(workoutRef.id, workouts);
-        console.log(workout, workout?.isPhysicalActivity);
         if (workout?.isPhysicalActivity) {
           return true;
         }
@@ -195,12 +194,6 @@ export default class Journal extends React.Component<
   };
 
   handleActiveStartDateChange = ({ activeStartDate, view }) => {
-    console.log(
-      "handle active start date change",
-      activeStartDate,
-      view,
-      view === "month"
-    );
     if (view !== "month") {
       return;
     }
