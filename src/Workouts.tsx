@@ -172,16 +172,26 @@ class EditWorkout extends React.PureComponent<
     event.preventDefault();
     const form = new FormData(event.target);
     const title = form.get("title");
-    const description = form.get("description");
-    const isQuickadd = form.get("is-quickadd");
-    const isPhysicalActivity = form.get("is-physical-activity");
-    const { workout } = this.props;
-    const { emoji, exercises } = this.state;
-
     if (!title) {
       this.setState({ error: "The workout needs a title" });
       return;
     }
+
+    const description = form.get("description");
+
+    const isQuickadd = form.get("is-quickadd");
+    const isPhysicalActivity = form.get("is-physical-activity");
+
+    const hasUnitHueco = form.get("has-unit-hueco");
+    const hasUnitMiles = form.get("has-unit-miles");
+    const hasUnitMinutes = form.get("has-unit-minutes");
+    const hasUnitReps = form.get("has-unit-reps");
+    const hasUnitVerticalFeet = form.get("has-unit-vertical-feet");
+    const hasUnitYDS = form.get("has-unit-yds");
+
+    const { workout } = this.props;
+    const { emoji, exercises } = this.state;
+
     if (workout?.id) {
       await updateWorkout(workout.id, {
         title,
@@ -190,6 +200,12 @@ class EditWorkout extends React.PureComponent<
         emoji,
         isQuickadd,
         isPhysicalActivity,
+        hasUnitHueco,
+        hasUnitMiles,
+        hasUnitMinutes,
+        hasUnitReps,
+        hasUnitVerticalFeet,
+        hasUnitYDS,
       });
       this.setState({ error: "", touched: false });
     } else {
@@ -199,7 +215,13 @@ class EditWorkout extends React.PureComponent<
         exercises,
         emoji,
         isQuickadd,
-        isPhysicalActivity
+        isPhysicalActivity,
+        hasUnitHueco,
+        hasUnitMiles,
+        hasUnitMinutes,
+        hasUnitReps,
+        hasUnitVerticalFeet,
+        hasUnitYDS
       );
       this.setState({ error: "", touched: false });
       event.target.reset();
@@ -236,64 +258,133 @@ class EditWorkout extends React.PureComponent<
             onEmojiSelect={this.handleEmojiSelect}
           />
           <form onSubmit={this.handleCreateWorkout}>
-            <label>
-              <input
-                type="text"
-                name="title"
-                defaultValue={workout && workout.title}
-                placeholder="workout name"
-                onChange={this.handleChange}
-              />
-            </label>
-            <label>
-              <input
-                type="text"
-                name="description"
-                defaultValue={workout && workout.description}
-                placeholder="workout description"
-                onChange={this.handleChange}
-              />
-            </label>
-            <ExerciseList
-              exercises={workoutExercises}
-              onDelete={this.removeExercise}
-            />
-            <label>
-              <select
-                name="exercise"
-                id={`exercise-select-${workout?.id}`}
-                onChange={this.addExercise}
-              >
-                <option value="">add exercises</option>
-                {availableExercises.map((exercise: Exercise, index) => {
-                  return (
-                    <option key={index} value={exercise.id}>
-                      {exercise.name}
-                      {exercise.description && " - "}
-                      {exercise.description}
-                    </option>
-                  );
-                })}
-              </select>
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                name="is-quickadd"
-                defaultChecked={workout?.isQuickadd}
-                onChange={this.handleChange}
-              />
-              journal shortcut
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                name="is-physical-activity"
-                defaultChecked={!workout ? true : workout?.isPhysicalActivity}
-                onChange={this.handleChange}
-              />
-              count towards daily movement
-            </label>
+            <section>
+              <label>
+                <input
+                  type="text"
+                  name="title"
+                  defaultValue={workout && workout.title}
+                  placeholder="workout name"
+                  onChange={this.handleChange}
+                />
+              </label>
+              <label>
+                <input
+                  type="text"
+                  name="description"
+                  defaultValue={workout && workout.description}
+                  placeholder="workout description"
+                  onChange={this.handleChange}
+                />
+              </label>
+            </section>
+            <section>
+              <h4>Exercises</h4>
+              {workoutExercises.length > 0 && (
+                <ExerciseList
+                  exercises={workoutExercises}
+                  onDelete={this.removeExercise}
+                />
+              )}
+              <label>
+                <select
+                  name="exercise"
+                  id={`exercise-select-${workout?.id}`}
+                  onChange={this.addExercise}
+                >
+                  <option value="">add exercises</option>
+                  {availableExercises.map((exercise: Exercise, index) => {
+                    return (
+                      <option key={index} value={exercise.id}>
+                        {exercise.name}
+                        {exercise.description && " - "}
+                        {exercise.description}
+                      </option>
+                    );
+                  })}
+                </select>
+              </label>
+            </section>
+            <section>
+              <h4>Configuration</h4>
+              <label>
+                <input
+                  type="checkbox"
+                  name="is-quickadd"
+                  defaultChecked={workout?.isQuickadd}
+                  onChange={this.handleChange}
+                />
+                journal shortcut
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="is-physical-activity"
+                  // If this is a new workout, check by default.
+                  // Otherwise, check is whatever the workout is configured as.
+                  defaultChecked={!workout ? true : workout?.isPhysicalActivity}
+                  onChange={this.handleChange}
+                />
+                count towards daily movement
+              </label>
+            </section>
+            <section>
+              <h4>Measurement</h4>
+              <label>
+                <input
+                  type="checkbox"
+                  name="has-unit-hueco"
+                  defaultChecked={workout?.hasUnitHueco}
+                  onChange={this.handleChange}
+                />
+                Hueco (v0, v1...)
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="has-unit-miles"
+                  defaultChecked={workout?.hasUnitMiles}
+                  onChange={this.handleChange}
+                />
+                Miles
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="has-unit-minutes"
+                  defaultChecked={workout?.hasUnitMinutes}
+                  onChange={this.handleChange}
+                />
+                Minutes
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="has-unit-reps"
+                  defaultChecked={workout?.hasUnitReps}
+                  onChange={this.handleChange}
+                />
+                Reps
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="has-unit-vertical-feet"
+                  defaultChecked={workout?.hasUnitVerticalFeet}
+                  onChange={this.handleChange}
+                />
+                Vertical feet
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="has-unit-vertical-yds"
+                  defaultChecked={workout?.hasUnitYDS}
+                  onChange={this.handleChange}
+                />
+                YDS (5.9, 5.10a...)
+              </label>
+            </section>
             <div>
               <button
                 className={touched ? "primary" : ""}

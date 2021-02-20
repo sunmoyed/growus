@@ -15,7 +15,7 @@ import { entryConverter, yearlyReviewConverter } from "./Classes";
 
 const EMPTY_USER: User = {
   username: "",
-  imgSrc: ""
+  imgSrc: "",
 };
 
 interface refsType {
@@ -44,7 +44,7 @@ let REFS: refsType = {
 export async function createUser(user: FirebaseUser) {
   const accountInfo = {
     ...getProfileInfoFromProvider(user),
-    created: currentTime()
+    created: currentTime(),
   };
   console.log(accountInfo);
 
@@ -56,7 +56,7 @@ export async function createUser(user: FirebaseUser) {
 export async function updateUser(uid, data) {
   const accountInfo = {
     ...data,
-    updated: currentTime()
+    updated: currentTime(),
   };
 
   const userRef = REFS.user || (await REFS.users.doc(uid));
@@ -101,7 +101,7 @@ function getProfileInfoFromProvider(user: FirebaseUser | null): User {
     return {
       username: user.email || "",
       displayName: user.displayName || "",
-      imgSrc: user.photoURL || ""
+      imgSrc: user.photoURL || "",
     };
   }
   return EMPTY_USER;
@@ -111,7 +111,7 @@ export async function createEncouragement(text) {
   const data: EncouragementData = {
     text,
     editor: REFS.user,
-    created: currentTime()
+    created: currentTime(),
   };
 
   REFS.encouragements.add({ ...data });
@@ -126,12 +126,12 @@ export async function deleteEncouragement(id) {
 export async function watchEncouragements(onEncouragementsChange) {
   await REFS.encouragements.orderBy("text", "desc").get();
 
-  REFS.encouragements.onSnapshot(snapshot => {
+  REFS.encouragements.onSnapshot((snapshot) => {
     snapshot.query
       .orderBy("text", "desc")
       .get()
-      .then(result =>
-        snapshotToList(result).then(list => {
+      .then((result) =>
+        snapshotToList(result).then((list) => {
           onEncouragementsChange(list);
         })
       );
@@ -139,12 +139,12 @@ export async function watchEncouragements(onEncouragementsChange) {
 }
 
 export async function watchExercises(onExercisesChange) {
-  REFS.exercises.onSnapshot(snapshot => {
+  REFS.exercises.onSnapshot((snapshot) => {
     snapshot.query
       .where("creator", "==", REFS.user)
       .get()
-      .then(result =>
-        snapshotToList(result).then(list => {
+      .then((result) =>
+        snapshotToList(result).then((list) => {
           onExercisesChange(list);
         })
       );
@@ -156,7 +156,7 @@ export async function createExercise(name, description) {
     name: name,
     description: description,
     userid: REFS.user ? REFS.user.id : "",
-    creator: REFS.user
+    creator: REFS.user,
   };
   REFS.exercises.add({ ...data });
 }
@@ -182,8 +182,8 @@ export async function watchWorkouts(onWorkoutsChange, uid: string) {
         );
 
         onWorkoutsChange(workouts as Array<Workout>);
-        })
-      );
+      })
+  );
 }
 
 export async function createWorkout(
@@ -192,7 +192,13 @@ export async function createWorkout(
   exercises,
   emoji,
   isQuickadd,
-  isPhysicalActivity
+  isPhysicalActivity,
+  hasUnitHueco,
+  hasUnitMiles,
+  hasUnitMinutes,
+  hasUnitReps,
+  hasUnitVerticalFeet,
+  hasUnitYDS
 ) {
   const data: Workout = {
     title: title,
@@ -202,6 +208,12 @@ export async function createWorkout(
     emoji,
     isQuickadd,
     isPhysicalActivity,
+    hasUnitHueco,
+    hasUnitMiles,
+    hasUnitMinutes,
+    hasUnitReps,
+    hasUnitVerticalFeet,
+    hasUnitYDS,
   };
   REFS.workouts.add({ ...data });
 }
@@ -209,7 +221,7 @@ export async function createWorkout(
 export async function updateWorkout(id, data) {
   const workoutData = {
     ...data,
-    updated: currentTime()
+    updated: currentTime(),
   };
 
   REFS.workouts.doc(id).update(workoutData);
@@ -316,7 +328,7 @@ export async function createJournalEntry(title, content, workout, date) {
     entryTime: date,
     created: currentTime(),
     userid: REFS.user ? REFS.user.id : "", // TODO reconcile userid and creator
-    creator: REFS.user
+    creator: REFS.user,
   };
   REFS.entries.add({ ...data });
 }
@@ -353,7 +365,7 @@ async function snapshotToList(snapshot: firestore.QuerySnapshot | null) {
 
     // Check for nested refs ): This can't be right
     await Promise.all(
-      Object.keys(data).map(async key => {
+      Object.keys(data).map(async (key) => {
         const value = data[key];
         // TODO how do I check if some this is of type documentRef or collectionRef???
         if (typeof value === "object" && "get" in value) {
@@ -370,7 +382,7 @@ async function snapshotToList(snapshot: firestore.QuerySnapshot | null) {
     derefedData.id = doc.id;
     list.push(derefedData);
   }
-  snapshot.forEach(async doc => {});
+  snapshot.forEach(async (doc) => {});
 
   return list;
 }

@@ -285,9 +285,35 @@ button.primary {
 }
 button.emoji {
   padding: 5px 8px;
+  margin: 0 5px;
   border-radius: 50%;
   font-size: 20px;
   background: var(--background);
+}
+
+/* 3 digits */
+input:not([type="checkbox"]):not([type="radio"]).measurement-number-short {
+  display: inline-block;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  width: 4em;
+}
+input:not([type="checkbox"]):not([type="radio"]).measurement-hueco {
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  width: 4em;
+  display: inline-block;
+  padding-left: 1em;
+}
+.measurement-hueco-wrapper {
+  position: relative;
+}
+.measurement-hueco-wrapper:before {
+  display: inline-block;
+  content: "v";
+  position: absolute;
+  bottom: 10px;
+  left: 5px;
 }
 
 .card {
@@ -463,7 +489,11 @@ button.calendar-active-day {
 }
 
 .banner {
-  background: linear-gradient(27deg, rgba(255, 234, 165, 1) 0%, rgba(170, 255, 235, 1) 100%);
+  background: linear-gradient(
+    27deg,
+    rgba(255, 234, 165, 1) 0%,
+    rgba(170, 255, 235, 1) 100%
+  );
   padding: 5px 10px;
   margin: 0 -15px;
   margin-bottom: 10px;

@@ -42,6 +42,12 @@ export type Workout = {
   emoji?: string; // the ? exists because of schema change.
   isQuickadd?: boolean;
   isPhysicalActivity?: boolean;
+  hasUnitHueco?: boolean;
+  hasUnitMiles?: boolean;
+  hasUnitMinutes?: boolean;
+  hasUnitReps?: boolean;
+  hasUnitVerticalFeet?: boolean;
+  hasUnitYDS?: boolean;
 };
 
 export type EntryFirebase = {
@@ -66,6 +72,12 @@ export type Entry = {
   id?: string;
   entryTime: Date;
   created?: Date;
+  unitHueco?: number; // vB -> -1, v0 -> 0, v1 -> 1...
+  unitMiles?: number;
+  unitMinutes?: number;
+  unitReps?: number;
+  unitVerticalFeet?: number;
+  unitYDS?: string; // I don't know yet :'D
 };
 
 export type YearlyReviewFirebase = {
