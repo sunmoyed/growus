@@ -12,6 +12,7 @@ import {
   getWorkoutById,
   filterEntrySnapshot,
   filterEntrySnapshotByUser,
+  deleteJournalEntry,
 } from "./Database";
 import { Entry } from "./Classes";
 import { goTo } from "./History";
@@ -250,14 +251,8 @@ export default class Journal extends React.Component<
   };
 
   render() {
-    const {
-      entries,
-      workouts,
-      isLoading,
-      endTime,
-      startTime,
-      hotDates,
-    } = this.state;
+    const { entries, workouts, isLoading, endTime, startTime, hotDates } =
+      this.state;
     const { userData, showAddEntry } = this.props;
 
     return (
@@ -288,10 +283,11 @@ export default class Journal extends React.Component<
         <h4>{startTime.format("LL")}</h4>
         {entries.map((entry: Entry, index) => (
           <JournalEntryDisplay
-            key={entry.id ? entry.id : index}
+            key={entry.id}
             {...entry}
             creator={userData}
             workout={findWorkoutById(entry.workoutRef.id, workouts)}
+            showDelete={true}
           />
         ))}
         {isLoading ? (
@@ -611,28 +607,47 @@ class JournalEntry extends React.PureComponent<
 }
 
 const JournalEntryDisplay = ({
+  id,
   content,
   title,
   workout,
   entryTime,
   creator,
+  showDelete,
 }: {
-  content?: string;
+  id: string;
   title: string;
   workout?: Workout;
   entryTime: Date;
   creator?: User;
+  content?: string;
+  showDelete?: boolean;
 }) => {
+  const handleDeleteEntry = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    if (window.confirm("Are you sure you wish to delete this entry?")) {
+      deleteJournalEntry(id);
+    }
+  };
+
   return (
     <section className="card">
-      <UserBadge
-        {...creator}
-        size={34}
-        subtitle={entryTime.toLocaleString()}
-        noun={`${workout && workout.emoji ? workout.emoji + " " : ""}${
-          workout ? workout.title : ""
-        }`}
-      />
+      <div className="badge-menu-wrapper">
+        <UserBadge
+          {...creator}
+          size={34}
+          subtitle={entryTime.toLocaleString()}
+          noun={`${workout && workout.emoji ? workout.emoji + " " : ""}${
+            workout ? workout.title : ""
+          }`}
+        />
+        {id && showDelete && (
+          <button className="text-button" onClick={handleDeleteEntry}>
+            x
+          </button>
+        )}
+      </div>
       <div className="card-content">
         <h4>{title}</h4>
         {content && <p>{content}</p>}

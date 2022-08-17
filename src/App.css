@@ -180,6 +180,12 @@ h4 {
   fill: currentColor;
 }
 
+.badge-menu-wrapper {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: row;
+}
+
 .workout-badge,
 .user-badge {
   display: inline-grid;
