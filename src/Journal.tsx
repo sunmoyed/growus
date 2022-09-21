@@ -214,6 +214,16 @@ export default class Journal extends React.Component<
       moment(activeStartDate).endOf("month"),
       moment(activeStartDate)
     );
+
+    // if active date is in current month in time,
+    // use today (i.e., latest entry). Otherwise, use end of month
+    const today = moment();
+    const monthDiff = today.diff(activeStartDate, "month", true);
+    if (monthDiff <= 1 && monthDiff > 0) {
+      this.handleNewDateClick(today, null);
+    } else {
+      this.handleNewDateClick(moment(activeStartDate).endOf("month"), null);
+    }
   };
 
   fetchHotDates = async (start: moment.Moment, end: moment.Moment) => {
