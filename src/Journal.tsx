@@ -177,7 +177,18 @@ export default class Journal extends React.Component<
     const { entriesSnapshot } = this.state;
     const { user } = this.props;
     const startTime = moment(date);
-    const endTime = moment(startTime).subtract(DISPLAY_INTERVAL_DAYS, "days");
+    const days_ahead_of_month_start = startTime.diff(
+      moment(startTime).startOf("month"),
+      "day",
+      true
+    );
+    const is_close_to_month_start =
+      days_ahead_of_month_start < DISPLAY_INTERVAL_DAYS;
+    // Initially show entries from only this month if entries
+    // within display interval cross over into previous month
+    const endTime = is_close_to_month_start
+      ? moment(startTime).startOf("month")
+      : moment(startTime).subtract(DISPLAY_INTERVAL_DAYS, "days");
 
     if (entriesSnapshot) {
       this.setState({ isLoading: true });
