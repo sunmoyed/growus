@@ -177,7 +177,18 @@ export default class Journal extends React.Component<
     const { entriesSnapshot } = this.state;
     const { user } = this.props;
     const startTime = moment(date);
-    const endTime = moment(startTime).subtract(DISPLAY_INTERVAL_DAYS, "days");
+    const days_ahead_of_month_start = startTime.diff(
+      moment(startTime).startOf("month"),
+      "day",
+      true
+    );
+    const is_close_to_month_start =
+      days_ahead_of_month_start < DISPLAY_INTERVAL_DAYS;
+    // Initially show entries from only this month if entries
+    // within display interval cross over into previous month
+    const endTime = is_close_to_month_start
+      ? moment(startTime).startOf("month")
+      : moment(startTime).subtract(DISPLAY_INTERVAL_DAYS, "days");
 
     if (entriesSnapshot) {
       this.setState({ isLoading: true });
@@ -203,6 +214,16 @@ export default class Journal extends React.Component<
       moment(activeStartDate).endOf("month"),
       moment(activeStartDate)
     );
+
+    // if active date is in current month in time,
+    // use today (i.e., latest entry). Otherwise, use end of month
+    const today = moment();
+    const monthDiff = today.diff(activeStartDate, "month", true);
+    if (monthDiff <= 1 && monthDiff > 0) {
+      this.handleNewDateClick(today, null);
+    } else {
+      this.handleNewDateClick(moment(activeStartDate).endOf("month"), null);
+    }
   };
 
   fetchHotDates = async (start: moment.Moment, end: moment.Moment) => {
